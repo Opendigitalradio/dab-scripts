@@ -1,10 +1,10 @@
 #!/bin/bash
 #
 # Encode programme using mplayer, connect through JACK
-# to dabplus-enc
+# to dabplus-enc or toolame
 #
 # Read webstream from URL using mplayer
-# Launch dabplus-enc encoder
+# Launch dabplus-enc or toolame encoder
 # connect both through JACK
 # monitor processes, and restart if necessary
 # Optionally send an email when restart happens
@@ -23,7 +23,7 @@ set -u
 
 # check number of arguments
 if [[ "$#" < 3 ]] ; then
-    echo "Usage $0 url jack-id destination [volume]"
+    echo "Usage $0 url jack-id destination [volume] [encoder]"
     echo "The volume setting is optional"
     exit 1
 fi
@@ -36,12 +36,18 @@ fi
 
 if [[ "$#" == 4 ]] ; then
     VOL=$4
+    ENC="dabplus-enc"
+elif [[ "$#" == 5 ]] ; then
+    VOL=$4
+    ENC=$5
 else
-    VOL=""
+    VOL="0"
+    ENC="dabplus-enc"
 fi
 
+
 BITRATE=80
-RATE=32000
+RATE=48 #kHz
 
 DLSDIR=site/dls
 SLIDEDIR=site/slide
@@ -88,12 +94,12 @@ trap sigint_trap SIGINT
 while [[ "$running" == "1" ]]
 do
     if [[ "$mplayerpid" == "0" ]] ; then
-        if [[ "$VOL" == "" ]] ; then
-            mplayer -quiet -af resample=$RATE:0:2 -ao jack:name=$ID $URL | \
+        if [[ "$VOL" == "0" ]] ; then
+            mplayer -quiet -af resample=${RATE}000:0:2 -ao jack:name=$ID $URL | \
                 ./icy-info.py $DLSDIR/${ID}.dls $DLSDIR/${ID}-default.dls &
             mplayerpid=$!
         else
-            mplayer -quiet -af resample=$RATE:0:2 -af volume=$VOL -ao jack:name=$ID $URL | \
+            mplayer -quiet -af resample=${RATE}000:0:2 -af volume=$VOL -ao jack:name=$ID $URL | \
                 ./icy-info.py $DLSDIR/${ID}.dls $DLSDIR/${ID}-default.dls &
             mplayerpid=$!
         fi
@@ -123,10 +129,17 @@ do
     fi
 
     if [[ "$mplayer_ok" == "1" && "$encoder_ok" == "0" ]] ; then
-        dabplus-enc -j ${ID}enc -l \
-            -p 34 -P $DLSDIR/${ID}.pad \
-            -b $BITRATE -r $RATE -f raw -a -o $DST &
-        encoderpid=$!
+        if [[ "$ENC" == "dabplus-enc" ]] ; then
+            dabplus-enc -j ${ID}enc -l \
+                -p 34 -P $DLSDIR/${ID}.pad \
+                -b $BITRATE -r ${RATE}000 -f raw -a -o $DST &
+            encoderpid=$!
+        elif [[ "$ENC" == "toolame" ]] ; then
+            toolame -b $BITRATE -s $RATE \
+                -p 34 -P $DLSDIR/${ID}.pad \
+                -j ${ID}enc $DST &
+            encoderpid=$!
+        fi
 
         # give some time to the encoder to set up and
         # wait until port becomes visible
