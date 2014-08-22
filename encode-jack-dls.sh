@@ -8,6 +8,8 @@
 # connect both through JACK
 # monitor processes, and restart if necessary
 # Optionally send an email when restart happens
+#
+# Extract ICY Text from stream and use it for DLS
 
 printerr() {
     echo -e "\033[01;31m$1\033[0m"
@@ -52,9 +54,13 @@ if [[ "$ENC" == "toolame" && "RATE" == "32" ]] ; then
     exit 1
 fi
 
+DLSDIR=site/dls
+SLIDEDIR=site/slide
+
 encoderalive=0
 mplayerpid=0
 encoderpid=0
+motencoderpid=0
 running=1
 
 mplayer_ok=0
@@ -77,6 +83,12 @@ sigint_trap() {
         kill -KILL $encoderpid
     fi
 
+    if [[ "$motencoderpid" != "0" ]] ; then
+        kill -TERM $motencoderpid
+        sleep 2
+        kill -KILL $motencoderpid
+    fi
+
     printmsg "Goodbye"
     exit
 }
@@ -88,10 +100,12 @@ while [[ "$running" == "1" ]]
 do
     if [[ "$mplayerpid" == "0" ]] ; then
         if [[ "$VOL" == "0" ]] ; then
-            mplayer -quiet -af resample=${RATE}000:0:2 -ao jack:name=$ID $URL &
+            mplayer -quiet -af resample=${RATE}000:0:2 -ao jack:name=$ID $URL | \
+                ./icy-info.py $DLSDIR/${ID}.dls $DLSDIR/${ID}-default.dls &
             mplayerpid=$!
         else
-            mplayer -quiet -af resample=${RATE}000:0:2 -af volume=$VOL -ao jack:name=$ID $URL &
+            mplayer -quiet -af resample=${RATE}000:0:2 -af volume=$VOL -ao jack:name=$ID $URL | \
+                ./icy-info.py $DLSDIR/${ID}.dls $DLSDIR/${ID}-default.dls &
             mplayerpid=$!
         fi
 
@@ -122,10 +136,12 @@ do
     if [[ "$mplayer_ok" == "1" && "$encoder_ok" == "0" ]] ; then
         if [[ "$ENC" == "dabplus-enc" ]] ; then
             dabplus-enc -j ${ID}enc -l \
+                -p 34 -P $DLSDIR/${ID}.pad \
                 -b $BITRATE -r ${RATE}000 -f raw -a -o $DST &
             encoderpid=$!
         elif [[ "$ENC" == "toolame" ]] ; then
             toolame -b $BITRATE -s $RATE \
+                -p 34 -P $DLSDIR/${ID}.pad \
                 -j ${ID}enc $DST &
             encoderpid=$!
         fi
@@ -172,6 +188,21 @@ do
         fi
     fi
 
+    if [[ "$encoder_ok" == "1" && "$motencoderpid" == "0" ]] ; then
+        # Check if the slides folder exists, and start mot-encoder accordingly
+        if [[ -d "$SLIDEDIR/$ID" ]] ; then
+            mot-encoder -o $DLSDIR/${ID}.pad -t $DLSDIR/${ID}.dls -p 34 -v \
+                -e -d $SLIDEDIR/${ID} &
+            motencoderpid=$!
+        else
+            mot-encoder -o $DLSDIR/${ID}.pad -t $DLSDIR/${ID}.dls -p 34 -v &
+            motencoderpid=$!
+        fi
+
+        printmsg "Started mot-encoder with pid $encoderpid"
+    fi
+
+
     sleep 5
 
     checkloop=1
@@ -189,11 +220,16 @@ do
                 kill -TERM $encoderpid
             fi
 
+            if [[ "$motencoderpid" != "0" ]] ; then
+                kill -TERM $motencoderpid
+            fi
+
             # mark as dead
             mplayerpid=0
             mplayer_ok=0
             encoderpid=0
             encoder_ok=0
+            motencoderpid=0
 
             checkloop=0
 
@@ -206,12 +242,31 @@ do
                 # the encoder died,
                 # no need to kill the mplayer, we can reconnect to it
 
+                if [[ "$motencoderpid" != "0" ]] ; then
+                    kill -TERM $motencoderpid
+                fi
+
+                motencoderpid=0
                 encoderpid=0
                 encoder_ok=0
 
                 checkloop=0
 
                 printerr "Encoder died"
+            fi
+        fi
+
+        if [[ "$motencoderpid" != "0" ]] ; then
+            kill -s 0 $motencoderpid
+            if [[ "$?" != "0" ]] ; then
+                # mot-encoder died
+                # let's try restarting it
+
+                motencoderpid=0
+
+                checkloop=0
+
+                printerr "mot-encoder died"
             fi
         fi
     done
@@ -223,7 +278,7 @@ do
 
         mail -s "Encoder $ID restart $URL" $MAILTO << EOF
 The encoder id:$ID
-encoding $URL -> $DST using encode-jack was restarted at
+encoding $URL -> $DST using encode-jack-dls was restarted at
 $NOW
 
 mplayer ok? $mplayer_ok
