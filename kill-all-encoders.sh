@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# kill all processes that contain _encode-
+# kill all processes
 
-pkill  _encode-
+pkill -INT "radio.sh"
 
