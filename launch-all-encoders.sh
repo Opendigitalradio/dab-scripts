@@ -1,6 +1,8 @@
 #!/bin/bash
 # launch each encoder in its own screen window
 
+set -e
+
 if [ -f site/configuration.sh ]
 then
 
@@ -8,7 +10,8 @@ then
 
     for radio in ${all_radios[*]}
     do
-        screen -t $radio ./radio $radio
+        echo "Launching $radio encoder"
+        screen -t $radio ./radio.sh $radio
         sleep 0.4
     done
 

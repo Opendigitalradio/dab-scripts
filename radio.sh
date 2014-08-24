@@ -2,8 +2,7 @@
 #
 # Start the encoder for the radio
 
-# Declare radios to be an associative array
-declare -A radios
+set -e
 
 source site/configuration.sh
 
