@@ -8,7 +8,8 @@ then
 
     for radio in ${all_radios[*]}
     do
-        screen -t $radio ./radio $radio
+        screen -d -m -t $radio -S $radio bash ./radio.sh $radio
+        echo Ok pour $radio
         sleep 0.4
     done
 
