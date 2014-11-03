@@ -137,7 +137,7 @@ do
         if [[ "$ENC" == "dabplus-enc" ]] ; then
             dabplus-enc -j ${ID}enc -l \
                 -p 34 -P $DLSDIR/${ID}.pad \
-                -b $BITRATE -r ${RATE}000 -f raw -a -o $DST &
+                -b $BITRATE -r ${RATE}000 -f raw -o $DST &
             encoderpid=$!
         elif [[ "$ENC" == "toolame" ]] ; then
             toolame -b $BITRATE -s $RATE \

@@ -122,7 +122,7 @@ do
     if [[ "$mplayer_ok" == "1" && "$encoder_ok" == "0" ]] ; then
         if [[ "$ENC" == "dabplus-enc" ]] ; then
             dabplus-enc -j ${ID}enc -l \
-                -b $BITRATE -r ${RATE}000 -f raw -a -o $DST &
+                -b $BITRATE -r ${RATE}000 -f raw -o $DST &
             encoderpid=$!
         elif [[ "$ENC" == "toolame" ]] ; then
             toolame -b $BITRATE -s $RATE \
