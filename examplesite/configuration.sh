@@ -4,6 +4,9 @@ all_radios=(
     "radio1"
     "radio2" )
 
+# declare radios to be an associative array, DO NOT REMOVE
+declare -A radios
+
 # for each radio, write here the full encoder command.
 # encode-jack needs:
 #  URL ID dabmux-URL [amplitude correction]
