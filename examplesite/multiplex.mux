@@ -25,7 +25,7 @@ ensemble {
 
 services {
     srv_radio1 {
-        label "GLOBAL FM+"
+        label "radio1"
         id 0x6543
     }
     srv_radio2 {
