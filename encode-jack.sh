@@ -20,13 +20,13 @@ printmsg() {
 set -u
 
 # check number of arguments
-if [[ "$#" < 3 ]] ; then
+if [[ "$#" -lt 3 ]] ; then
     echo "Usage $0 url jack-id destination [volume] [encoder]"
     echo "The volume setting is optional"
     exit 1
 fi
 
-if [[ "$#" > 2 ]] ; then
+if [[ "$#" -gt 2 ]] ; then
     URL=$1
     ID=$2
     DST=$3
@@ -47,12 +47,11 @@ fi
 BITRATE=80
 RATE=32 #kHz
 
-if [[ "$ENC" == "toolame" && "RATE" == "32" ]] ; then
+if [[ "$ENC" == "toolame" && "$RATE" == "32" ]] ; then
     echo "32kHz not supported for toolame"
     exit 1
 fi
 
-encoderalive=0
 mplayerpid=0
 encoderpid=0
 running=1
@@ -88,10 +87,10 @@ while [[ "$running" == "1" ]]
 do
     if [[ "$mplayerpid" == "0" ]] ; then
         if [[ "$VOL" == "0" ]] ; then
-            mplayer -quiet -af resample=${RATE}000:0:2 -ao jack:name=$ID $URL &
+            mplayer -quiet -af resample=${RATE}000:0:2 -ao jack:name=$ID "$URL" &
             mplayerpid=$!
         else
-            mplayer -quiet -af resample=${RATE}000:0:2 -af volume=$VOL -ao jack:name=$ID $URL &
+            mplayer -quiet -af resample=${RATE}000:0:2 -af volume=$VOL -ao jack:name=$ID "$URL" &
             mplayerpid=$!
         fi
 
@@ -221,7 +220,7 @@ do
     if [[ "$MAILTO" != "" ]] ; then
         NOW=$(date)
 
-        mail -s "Encoder $ID restart $URL" $MAILTO << EOF
+        mail -s "Encoder $ID restart $URL" "$MAILTO" << EOF
 The encoder id:$ID
 encoding $URL -> $DST using encode-jack was restarted at
 $NOW

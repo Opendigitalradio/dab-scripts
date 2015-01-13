@@ -2,7 +2,7 @@
 #
 # Launch the multiplexer and the modulator
 
-if [[ -e site/multiplex.mux && -e site/mod.ini && site/mail-warning.txt ]]
+if [[ -e site/multiplex.mux && -e site/mod.ini && -e site/mail-warning.txt ]]
 then
 
     while true
@@ -14,7 +14,7 @@ then
 
         if [[ "$MAILTO" != "" ]] ; then
             NOW=$(date)
-            mail -s "MUX and MOD restart" $MAILTO << EOF
+            mail -s "MUX and MOD restart" "$MAILTO" << EOF
 The mux and mod were restarted at
 $NOW
 

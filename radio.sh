@@ -27,7 +27,7 @@ sigint_trap() {
 set -e
 
 # check number of arguments
-if [[ "$#" < 1 ]] ; then
+if [[ "$#" -lt 1 ]] ; then
     echo "Usage $0 radio-id"
     echo "You must specify which radio to start"
     exit 1
@@ -35,7 +35,7 @@ fi
 
 RADIO=$1
 
-if [ ${radios[$RADIO]+_} ] ; then
+if [ "${radios[$RADIO]+_}" ] ; then
     COMMAND=${radios[$RADIO]}
 
     trap sigint_trap SIGINT

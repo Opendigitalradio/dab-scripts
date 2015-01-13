@@ -11,7 +11,7 @@ then
     for radio in ${all_radios[*]}
     do
         echo "Launching $radio encoder"
-        screen -t $radio ./radio.sh $radio
+        screen -t "$radio" ./radio.sh "$radio"
         sleep 0.4
     done
 
