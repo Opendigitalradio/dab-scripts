@@ -11,10 +11,12 @@
 
 printerr() {
     echo -e "\033[01;31m$1\033[0m"
+    logger -p local0.error -t "$ID" "$1"
 }
 
 printmsg() {
     echo -e "\033[01;32m$1\033[0m"
+    logger -p local0.notice -t "$ID" "$1"
 }
 
 set -u
@@ -76,7 +78,7 @@ sigint_trap() {
         kill -KILL $encoderpid
     fi
 
-    printmsg "Goodbye"
+    printmsg "quitting"
     exit
 }
 
