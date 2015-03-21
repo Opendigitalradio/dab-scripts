@@ -20,7 +20,7 @@ set -u
 
 # check number of arguments
 if [[ "$#" -lt 3 ]] ; then
-    echo "Usage $0 url destination [encoder]"
+    echo "Usage $0 url id destination [encoder]"
     echo "Encoder shall be 'dabplus-enc' or 'toolame'"
     exit 1
 fi
