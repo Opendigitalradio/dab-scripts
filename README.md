@@ -17,6 +17,10 @@ These scripts assume that all programme streams to be included in
 the multiplex are mp3 webstreams. For each programme, a URL has to
 be specified.
 
+The scripts are designed to be failure-resilient: in case and encoder
+or a web-stream decoder crashes, an email is sent to the operator, a
+log message is written to syslog, and the encoding chain is restarted.
+
 Prerequisites
 -------------
 You need to have a working ODR-DabMux and ODR-DabMod configuration to
@@ -77,6 +81,10 @@ will automatically restart the encoder if there is a failure.
 
 The *encode-XYZ.sh* scripts contain all the logic for failure resilience,
 and use different players to read the stream.
+
+*encode-libvlc.sh* is the newest addition: it launches an encoder using the
+integrated libVLC input that can directly connect to a web-stream. There is
+no DLS support yet.
 
 *encode-jack.sh* is the best supported script of all these. It extracts
 ICY-Text and launches the mot-encoder to insert DLS and optionally slides.
