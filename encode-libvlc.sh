@@ -29,13 +29,22 @@ URL=$1
 ID=$2
 DST=$3
 
-if [[ "$#" -eq 4 ]] ; then
+if [[ "$#" -gt 3 ]] ; then
     ENC=$4
 else
     ENC="dabplus-enc"
 fi
 
-BITRATE=80
+if [[ "$#" -gt 4 ]]; then
+    shift 4
+    OPTIONS=$@
+else
+   if [[ "$ENC" == "dabplus-enc" ]]; then
+       OPTIONS="-b 80 -r 32000"
+   else
+       OPTIONS="-b 128 -s 48 -L"
+   fi
+fi
 
 running=1
 
@@ -64,10 +73,10 @@ do
 
     printmsg "Launching encoder"
     if [[ "$ENC" == "dabplus-enc" ]] ; then
-        dabplus-enc -v "$URL" -b $BITRATE -r 32000 -o "$DST" -l &
+        dabplus-enc -v "$URL" $OPTIONS -o "$DST" -l &
         encoderpid=$!
     elif [[ "$ENC" == "toolame" ]] ; then
-        toolame -V -s 48 -L -b $BITRATE "$URL" "$DST" &
+        toolame $OPTIONS -V "$URL" "$DST" &
         encoderpid=$!
     fi
     printerr "Detected crash of encoder!"
