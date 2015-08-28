@@ -3,18 +3,24 @@
 
 set -e
 
-if [ -f site/configuration.sh ]
+if [ -f ./configuration.sh ]
 then
 
-    source site/configuration.sh
+    source ./configuration.sh
 
     for radio in ${all_radios[*]}
     do
         echo "Launching $radio encoder"
-        screen -t "$radio" ./radio.sh "$radio"
+        screen -t "Audio Encoder $radio" ./radio.sh "$radio"
         sleep 0.4
     done
 
+    for mot in ${all_mot[*]}
+    do
+        echo "Launching $mot mot-encoder"
+        screen -t "MOT Encoder $mot" ./mot.sh "$mot"
+	sleep 0.4
+    done
 else
     echo "Error: No site configuration available!"
     exit 1
