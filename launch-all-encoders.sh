@@ -3,10 +3,10 @@
 
 set -e
 
-if [ -f ./configuration.sh ]
+if [ -f site/configuration.sh ]
 then
 
-    source ./configuration.sh
+    source site/configuration.sh
 
     for radio in ${all_radios[*]}
     do

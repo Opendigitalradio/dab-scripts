@@ -4,7 +4,7 @@
 
 set -e
 
-source ./configuration.sh
+source site/configuration.sh
 
 printerr() {
     echo -e "\033[01;31m$1\033[0m"
