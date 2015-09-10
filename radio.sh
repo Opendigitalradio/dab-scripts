@@ -16,9 +16,10 @@ printmsg() {
 
 script_pid=0
 sigint_trap() {
-    printerr "Got Ctrl-C, killing radio encoder script"
+    printerr "Got Ctrl-C"
     if [[ "$script_pid" != "0" ]] ; then
-        kill $script_pid
+        printmsg "killing radio encoder script $script_pid"
+        kill -INT $script_pid
         script_pid=0
         wait
     fi
