@@ -1,17 +1,16 @@
 ODR-mmbTools scripts for 24/7 operation
 =======================================
-version : radioHack2016
-
+version : 2016-10-07
 
 Prerequisites
 -------------
-You need to have a working ODR-DabMux, ODR-DabMod, FDK-AAC-DABplus and/or
-Toolame-DAB configuration to use these scripts. Also
+You need to have a working ODR-DabMux, ODR-DabMod, ODR-AudioEnc, ODR-PadEnc
+and/or Toolame-DAB configuration to use these scripts. Also
 [supervisor](http://supervisord.org/) is needed. (apt-get install supervisor)
 
 The tools are expected to be installed in their usual place in /usr/local.
 
-Folder structure
+Folder Structure
 ----------------
 
 The 'config' folder contains all needed configuration file and needed to be
@@ -24,14 +23,14 @@ moved into /home/odr/ folder.
     with mkfifo for each radio (e.g. mkfifo /home/odr/config/mot/f3.pad)
 
 
-About encoder and mot-encoder
------------------------------
+About Audio and PAD Encoders
+----------------------------
 
-The encoder (toolame-dab or dabplus-enc) writes ICY-Text into a text file. You
+The encoder (ODR-AudioEnc or toolame-dab) writes ICY-Text into a text file. You
 need to create this file at first for each radio :
   * touch /home/odr/config/mot/f3.txt
 
-mot-encoder reads ICY-Text information from previous text file and writes into
+ODR-PadEnc reads ICY-Text information from previous text file and writes into
 the pad file. This pad file need to be a FIFO and you need to create it for
 each radio :
   * mkfifo /home/odr/config/mot/f3.pad
@@ -40,7 +39,7 @@ If you use Slide Show, you can put your images into the directory under mot
 folder corresponding to the radio (example: /home/odr/config/mot/f3/)
 
 
-About supervisor
+About Supervisor
 ----------------
 
 You need to create sym link into /etc/supervisor/conf.d/ for each radio
