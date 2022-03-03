@@ -17,6 +17,13 @@ With Vagrant and Virtualbox, you can run the ODR-mmbTools regardless of the oper
     vagrant ssh
     ```
 1. Follow the instructions of the **README.md** in the install folder to build the ODR-mmbTools suite
+1. Exit the virtual session with the command **exit**
+1. Connect the SoapySDR transceiver device to your physical host where VirtualBox is running
+1. Open VirtualBox and add a USB filter that relates to your SoapySDR device to the **odr-mmb** session
+1. Restart the **odr-mmbtools** VirtualBox session with Vagrant:
+    ```
+    vagrant reload
+    ```
 
 # Operations
 Once the ODR-mmbTools are installed, you no longer need to access the virtual session, unless you need to make configuration changes.
