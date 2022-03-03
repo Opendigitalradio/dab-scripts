@@ -174,7 +174,7 @@ install_config () {
   if [ -d ${DIR_CONFIG} ]; then
     rm -r ${DIR_CONFIG}
   fi
-  cp -r $(realpath $(dirname $0))/${CONFIG_NAME} ${DIR_CONFIG}
+  cp -r $(realpath $(dirname $0))/../${CONFIG_NAME} ${DIR_CONFIG}
   sudo ln -s ${DIR_CONFIG}/supervisor/*.conf /etc/supervisor/conf.d/
 
   ## Adapt the supervisor configuration files
