@@ -112,7 +112,7 @@ install_dabmux () {
 
 install_dabmod () {
   # Install mmb-tools: modulator
-  sudo apt-get install -y libfftw3-dev libsoapysdr-dev
+  sudo apt-get install -y libfftw3-dev libsoapysdr-dev libuhd-dev
   if [ ! -d ${DIR_MOD} ]; then
     pushd ${DIR_MMB}
     git clone https://github.com/Opendigitalradio/ODR-DabMod.git --branch ${1}
@@ -120,7 +120,7 @@ install_dabmod () {
   fi
   pushd ${DIR_MOD}
   ./bootstrap.sh
-  ./configure CFLAGS="-O3 -DNDEBUG" CXXFLAGS="-O3 -DNDEBUG" --enable-fast-math --disable-output-uhd --disable-zeromq
+  ./configure CFLAGS="-O3 -DNDEBUG" CXXFLAGS="-O3 -DNDEBUG" --enable-fast-math --disable-zeromq
   make
   sudo make install
   popd
