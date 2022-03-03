@@ -43,7 +43,7 @@ If you want to quickly setup a lite clean debian environment, we suggest you use
    # Install the stable version of odr-mmbTools
    bash $HOME/dab-scripts/install/odr-get --branch master install
 
-   # Or install the current version of odr-mmbTools
+   # Or install the next version of odr-mmbTools
    bash $HOME/dab-scripts/install/odr-get --branch next install
    ```
 
