@@ -7,9 +7,10 @@ With Vagrant and Virtualbox, you can run the ODR-mmbTools regardless of the oper
 1. Install Virtualbox for your operating system
 1. Install the Virtualbox Extension pack
 1. Install Vagrant for your operating system
+1. Clone this repository or copy the Vagrantfile on your host
 1. Create and start the virtual environment:
     ```
-    cd $HOME/dab-scripts/vagrant
+    # Go to the directory that contains the Vagrantfile
     vagrant up
     ```
 1. Access the virtual session to build the ODR-mmbTools suite:
