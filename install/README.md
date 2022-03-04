@@ -42,7 +42,7 @@ If you want to quickly setup a lite clean debian environment, we suggest you use
 
    # Or clone the next version of dab-scripts
    git clone --branch next https://github.com/opendigitalradio/dab-scripts.git
-```
+   ```
 1. Install the ODR-mmbTools suite and the sample configuration folder
    ```
    # Install the stable version of odr-mmbTools
