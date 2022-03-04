@@ -69,6 +69,7 @@ install_audioenc () {
   ./configure --enable-vlc
   make
   sudo make install
+  make clean
   popd
 }
 
@@ -85,6 +86,7 @@ install_padenc () {
   ./configure
   make
   sudo make install
+  make clean
   popd
 }
 
@@ -107,6 +109,7 @@ install_dabmux () {
   fi
   make
   sudo make install
+  make clean
   popd
 }
 
@@ -123,6 +126,7 @@ install_dabmod () {
   ./configure CFLAGS="-O3 -DNDEBUG" CXXFLAGS="-O3 -DNDEBUG" --enable-fast-math --disable-zeromq
   make
   sudo make install
+  make clean
   popd
 }
 
@@ -138,6 +142,7 @@ install_fdkaac () {
   ./configure
   make
   sudo make install
+  make clean
   popd
 }
 
@@ -153,6 +158,7 @@ install_srccmp () {
   ./configure
   make
   sudo make install
+  make clean
   popd
 }
 
@@ -198,7 +204,7 @@ install_config () {
 }
 
 install () {
-  # Clone the sources, build and install programs
+  # Clone the sources, build and install programs, clean-up
   install_base ${1}
   install_fdkaac ${1}
   install_audioenc ${1}
@@ -210,6 +216,9 @@ install () {
   install_config
   sudo ldconfig
 
+  sudo apt-get purge -y
+  sudo rm -rf /var/lib/apt/lists/*
+  
   echo "ODR-mmbTools suite and configuration files installed"
 }
 
