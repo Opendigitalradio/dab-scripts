@@ -4,7 +4,7 @@
 - [Removal](#removal)
 
 # Introduction
-The goal of the odr-get shell script is to install:
+The goal of the mmbtools-get shell script is to install:
 - the [odr-mmbtools](https://www.opendigitalradio.org/mmbtools) components developed by the [Open Digital Radio](https://www.opendigitalradio.org/) non-profit association on a clean debian environment
 - Working configuration files that you can later customize as you see fit
 
@@ -41,10 +41,10 @@ If you want to quickly setup a lite clean debian environment, we suggest you use
 1. Install the ODR-mmbTools suite and the sample configuration folder
    ```
    # Install the stable version of odr-mmbTools
-   bash $HOME/dab-scripts/install/odr-get --branch master install
+   bash $HOME/dab-scripts/install/mmbtools-get --branch master install
 
    # Or install the next version of odr-mmbTools
-   bash $HOME/dab-scripts/install/odr-get --branch next install
+   bash $HOME/dab-scripts/install/mmbtools-get --branch next install
    ```
 
 # Removal
@@ -52,5 +52,5 @@ If you wish to remove the odr-mmbTools suite and the sample configuration folder
 1. Stop all odr-mmbTools related jobs in supervisor
 2. Remove the ODR-mmbTools software suite and the configuration folder
    ```
-   bash $HOME/dab-scripts/install/odr-get remove
+   bash $HOME/dab-scripts/install/mmbtools-get remove
    ```
