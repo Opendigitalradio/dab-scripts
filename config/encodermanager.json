@@ -1,0 +1,165 @@
+{
+    "global": {
+        "daemon": false,
+        "max_encoder_instance": 3,
+        "logs_directory": "/home/pi/ODR-mmbTools/ODR-EncoderManager/logs/",
+        "supervisor_xmlrpc": "http://odr:odr@127.0.0.1:8001/RPC2",
+        "static_directory": "/home/pi/ODR-mmbTools/ODR-EncoderManager/static/",
+        "host": "0.0.0.0",
+        "supervisor_file": "/home/pi/config/supervisor/ODR-encoders.conf",
+        "port": 8003
+    },
+    "auth": {
+        "users": [
+            {
+                "username": "odr",
+                "password": "odr"
+            }
+        ]
+    },
+    "odr": [
+        {
+            "uniq_id": "defee58a-f768-4ca9-a0f7-88f08b2e8748",
+            "autostart": "false",
+            "path": {
+                "encoder_path": "/usr/local/bin/odr-audioenc",
+                "padenc_path": "/usr/local/bin/odr-padenc",
+                "sourcecompanion_path": "/usr/local/bin/odr-sourcecompanion",
+                "zmq_key_tmp_file": "/var/tmp/zmq-P01.key"
+            },
+            "source": {
+                "type": "stream",
+                "stats_socket": "/var/tmp/P01.stats",
+                "stream_url": "http://radiomonaco.ice.infomaniak.ch/radiomonaco-128.mp3",
+                "stream_writeicytext": "true",
+                "stream_lib": "vlc",
+                "alsa_device": "plughw:1,0",
+                "driftcomp": "true",
+                "silence_detect": "true",
+                "silence_duration": "60",
+                "avt_input_uri": "udp://:32010",
+                "avt_control_uri": "udp://192.168.128.111:9325",
+                "avt_pad_port": "9405",
+                "avt_jitter_size": "80",
+                "avt_timeout": "4000",
+                "aes67_sdp_file": "/var/tmp/defee58a-f768-4ca9-a0f7-88f08b2e8748.sdp",
+                "aes67_sdp": ""
+            },
+            "output": {
+                "type": "dabp",
+                "output": [
+                    {
+                        "name": "",
+                        "type": "editcp",
+                        "host": "127.0.0.1",
+                        "port": "9001",
+                        "enable": "true"
+                    }
+                ],
+                "zmq_key": "",
+                "bitrate": "128",
+                "samplerate": "48000",
+                "channels": "2",
+                "dabp_sbr": "true",
+                "dabp_ps": "false",
+                "dabp_afterburner": "true",
+                "dab_dabmode": "j",
+                "dab_dabpsy": "1",
+                "edi_identifier": "",
+                "edi_timestamps_delay": ""
+            },
+            "padenc": {
+                "enable": "true",
+                "pad": "34",
+                "dls_file": "/home/pi/config/mot/P01/INFO.dls",
+                "slide_directory": "/home/pi/config/mot/P01/slide/",
+                "slide_sleeping": "0",
+                "slide_once": "false",
+                "raw_dls": "false",
+                "raw_slides": "false",
+                "uniform_label": "12",
+                "uniform_label_ins": "1200",
+                "slide_carousel_interval": "",
+                "slide_live_interval": "",
+                "slide_live_lifetime": ""
+            },
+            "name": "P01",
+            "description": "Radio Monaco",
+            "supervisor_additional_options": {
+                "user": "pi",
+                "group": "pi",
+                "autorestart": "false"
+            }
+        },
+        {
+            "uniq_id": "7158c498-1ef1-4580-b385-23a3c06ba985",
+            "autostart": "false",
+            "path": {
+                "encoder_path": "/usr/local/bin/odr-audioenc",
+                "padenc_path": "/usr/local/bin/odr-padenc",
+                "sourcecompanion_path": "/usr/local/bin/odr-sourcecompanion",
+                "zmq_key_tmp_file": "/var/tmp/zmq-P02.key"
+            },
+            "source": {
+                "type": "stream",
+                "stats_socket": "/var/tmp/P02.stats",
+                "stream_url": "http://media-ice.musicradio.com/CapitalMP3",
+                "stream_writeicytext": "true",
+                "stream_lib": "vlc",
+                "alsa_device": "plughw:1,0",
+                "driftcomp": "true",
+                "silence_detect": "true",
+                "silence_duration": "60",
+                "avt_input_uri": "udp://:32010",
+                "avt_control_uri": "udp://192.168.128.111:9325",
+                "avt_pad_port": "9405",
+                "avt_jitter_size": "80",
+                "avt_timeout": "4000",
+                "aes67_sdp_file": "/var/tmp/7158c498-1ef1-4580-b385-23a3c06ba985.sdp",
+                "aes67_sdp": ""
+            },
+            "output": {
+                "type": "dabp",
+                "output": [
+                    {
+                        "name": "",
+                        "type": "editcp",
+                        "host": "127.0.0.1",
+                        "port": "9002",
+                        "enable": "true"
+                    }
+                ],
+                "zmq_key": "",
+                "bitrate": "128",
+                "samplerate": "48000",
+                "channels": "2",
+                "dabp_sbr": "true",
+                "dabp_ps": "false",
+                "dabp_afterburner": "true",
+                "dab_dabmode": "j",
+                "dab_dabpsy": "1",
+                "edi_identifier": "",
+                "edi_timestamps_delay": ""
+            },
+            "padenc": {
+                "enable": "true",
+                "pad": "34",
+                "dls_file": "/home/pi/config/mot/P02/INFO.dls",
+                "slide_directory": "/home/pi/config/mot/P02/slide",
+                "slide_sleeping": "0",
+                "slide_once": "false",
+                "raw_dls": "false",
+                "raw_slides": "false",
+                "uniform_label": "12",
+                "uniform_label_ins": "1200"
+            },
+            "name": "P02",
+            "description": "Capital FM London",
+            "supervisor_additional_options": {
+                "user": "pi",
+                "group": "pi",
+                "autorestart": "false"
+            }
+        }
+    ]
+}

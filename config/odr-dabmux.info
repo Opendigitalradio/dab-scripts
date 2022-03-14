@@ -1,0 +1,99 @@
+general {
+    dabmode 1
+    nbframes 0
+    syslog false
+    tist false
+    managementport 12720
+}
+
+remotecontrol {
+    telnetport 12721
+    zmqendpoint tcp://lo:12722
+}
+
+ensemble {
+    id 0x4fff
+    ecc 0xe1
+    local-time-offset auto
+    international-table 1
+    reconfig-counter hash
+    label "Micro DAB"
+    shortlabel "M DAB"
+}
+
+services {
+    srv-01 {
+        id 0xb1c7
+        ecc 0xe2
+        label "RADIO MONACO"
+        shortlabel "MONACO"
+        pty 10
+        pty-sd static
+        language 0x0f
+    }
+    srv-02 {
+        id 0xc479
+        ecc 0xe1
+        label "CAPITAL LONDON"
+        shortlabel "CAPITAL"
+        pty 10
+        pty-sd static
+        language 0x09
+    }
+}
+
+subchannels {
+    sub-01 {
+        type dabplus
+        bitrate 128
+        id 1
+        protection 3
+        inputproto edi
+        inputuri "tcp://127.0.0.1:9001"
+        buffer-management prebuffering
+        buffer 40
+        prebuffering 20
+    }
+    sub-02 {
+        type dabplus
+        bitrate 128
+        id 2
+        protection 3
+        inputproto edi
+        inputuri "tcp://127.0.0.1:9002"
+        buffer-management prebuffering
+        buffer 40
+        prebuffering 20
+    }
+}
+
+components {
+    comp-01 {
+        service srv-01
+        subchannel sub-01
+        user-applications {
+            userapp "slideshow"
+        }
+    }
+    comp-02 {
+        service srv-02
+        subchannel sub-02
+        user-applications {
+            userapp "slideshow"
+        }
+    }
+}
+
+outputs {
+    edi {
+        destinations {
+            edi_tcp {
+                protocol tcp
+                listenport 9201
+            }
+        }
+    }
+
+    ; Throttle output to real-time (one ETI frame every 24ms)
+    throttle "simul://"
+}

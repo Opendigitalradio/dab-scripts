@@ -1,0 +1,266 @@
+#!/bin/bash
+
+#    mmbtools-get - Build, install, uninstall, remove the software stack
+#    Copyright (C) 20222 Robin ALEXANDER
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+
+## CONSTANTS
+source $(realpath $(dirname $0))/mmbtools-get.conf
+
+print_usage () {
+  cat <<- EOF
+  Usage:
+    mmbtools-get [option] action
+
+  Option:
+    -h, --help           Print this help
+    -b, --branch <name>  Specify the odr-mmbTools branch to use 
+
+  Action:
+    install              Install the programs and the configuration sample
+    remove               Remove the programs and the configuration sample
+
+EOF
+}
+
+install_base () {
+  # Install the essential tools and create the tools root directory
+  sudo apt-get update
+  sudo apt-get install -y build-essential automake libtool supervisor
+
+  if [ ! -d ${DIR_MMB} ]; then
+    mkdir ${DIR_MMB}
+  fi
+
+  if [ ! $(grep inet_http_server /etc/supervisor/supervisord.conf) ]; then
+    cat << EOF | sudo tee -a /etc/supervisor/supervisord.conf > /dev/null
+
+[inet_http_server]
+port = 8001
+username = odr ; Auth username
+password = odr ; Auth password
+EOF
+  fi
+}
+
+install_audioenc () {
+  # Install mmb-tools: audio encoder
+  sudo apt-get install -y libzmq3-dev libzmq5 libvlc-dev vlc-data vlc-plugin-base libcurl4-openssl-dev pkg-config
+  if [ ! -d ${DIR_AUDIO} ]; then
+    pushd ${DIR_MMB}
+    git clone https://github.com/Opendigitalradio/ODR-AudioEnc.git --branch ${1}
+    popd
+  fi
+  pushd ${DIR_AUDIO}
+  ./bootstrap
+  ./configure --enable-vlc
+  make
+  sudo make install
+  make clean
+  popd
+}
+
+install_padenc () {
+  # Install mmb-tools: PAD encoder
+  sudo apt-get install -y libmagickwand-dev
+  if [ ! -d ${DIR_PAD} ]; then
+    pushd ${DIR_MMB}
+    git clone https://github.com/Opendigitalradio/ODR-PadEnc.git --branch ${1}
+    popd
+  fi
+  pushd ${DIR_PAD}
+  ./bootstrap
+  ./configure
+  make
+  sudo make install
+  make clean
+  popd
+}
+
+install_dabmux () {
+  # Install mmb-tools: dab multiplexer
+  sudo apt-get install -y libboost-system-dev libcurl4-openssl-dev python3-zmq
+  if [ ! -d ${DIR_MUX} ]; then
+    pushd ${DIR_MMB}
+    git clone https://github.com/Opendigitalradio/ODR-DabMux.git --branch ${1}
+    popd
+  fi
+  pushd ${DIR_MUX}
+  ./bootstrap.sh
+  ## Temporary, until ODR-DabMux configure is modified
+  arch=$(uname -m)
+  if [ "${arch}" = "armv7l" ]; then
+    ./configure --with-boost-libdir=/usr/lib/arm-linux-gnueabihf
+  else
+    ./configure
+  fi
+  make
+  sudo make install
+  make clean
+  popd
+}
+
+install_dabmod () {
+  # Install mmb-tools: modulator
+  sudo apt-get install -y libfftw3-dev libzmq3-dev libuhd-dev libsoapysdr-dev libbladerf-dev liblimesuite-dev
+  if [ ! -d ${DIR_MOD} ]; then
+    pushd ${DIR_MMB}
+    git clone https://github.com/Opendigitalradio/ODR-DabMod.git --branch ${1}
+    popd
+  fi
+  pushd ${DIR_MOD}
+  ./bootstrap.sh
+  ./configure CFLAGS="-O3 -DNDEBUG" CXXFLAGS="-O3 -DNDEBUG" --enable-fast-math --disable-zeromq --enable-limesdr --enable-bladerf
+  make
+  sudo make install
+  make clean
+  popd
+}
+
+install_fdkaac () {
+  # Install mmb-tools: fdk-aac
+  if [ ! -d ${DIR_FDKAAC} ]; then
+    pushd ${DIR_MMB}
+    git clone https://github.com/Opendigitalradio/fdk-aac.git
+    popd
+  fi
+  pushd ${DIR_FDKAAC}
+  ./bootstrap
+  ./configure
+  make
+  sudo make install
+  make clean
+  popd
+}
+
+install_srccmp () {
+  # Install mmb-tools: source companion
+  if [ ! -d ${DIR_SRCCMP} ]; then
+    pushd ${DIR_MMB}
+    git clone https://github.com/Opendigitalradio/ODR-SourceCompanion.git --branch ${1}
+    popd
+  fi
+  pushd ${DIR_SRCCMP}
+  ./bootstrap
+  ./configure
+  make
+  sudo make install
+  make clean
+  popd
+}
+
+install_encmgr () {
+  # Install mmb-tools: encoder manager
+  sudo apt-get install -y python3-cherrypy3 python3-jinja2 python3-serial python3-yaml supervisor python3-pysnmp4
+  if [ ! -d ${DIR_ENCMGR} ]; then
+    pushd ${DIR_MMB}
+    git clone https://github.com/Opendigitalradio/ODR-EncoderManager.git --branch ${1}
+    popd
+  fi
+  ## Add the current user to the dialout and audio groups
+  sudo usermod --append --group dialout $(id --user --name)
+  sudo usermod --append --group audio $(id --user --name)
+}
+
+install_config () {
+# Copy the configuration files
+  if [ -d ${DIR_CONFIG} ]; then
+    rm -r ${DIR_CONFIG}
+  fi
+  cp -r $(realpath $(dirname $0))/../${CONFIG_NAME} ${DIR_CONFIG}
+  sudo ln -s ${DIR_CONFIG}/supervisor/*.conf /etc/supervisor/conf.d/
+
+  ## Adapt the supervisor configuration files
+  sed -e "s;user=pi;user=$(id --user --name);g" -i ${DIR_CONFIG}/supervisor/*.conf
+  sed -e "s;group=pi;group=$(id --group --name);g" -i ${DIR_CONFIG}/supervisor/*.conf
+  sed -e "s;/home/pi;${HOME};g" -i ${HOME}/config/supervisor/*.conf
+
+  ## Adapt the ODR-EncoderManager configuration file
+  sed -e "s;/home/pi;${HOME};g" -i ${DIR_CONFIG}/encodermanager.json
+  sed -e "s;\"user\": \"pi\";\"user\": \"$(id --user --name)\";g" -i ${DIR_CONFIG}/encodermanager.json
+  sed -e "s;\"group\": \"pi\";\"group\": \"$(id --group --name)\";g" -i ${DIR_CONFIG}/encodermanager.json
+
+  ## Adapt the odr-misc.conf
+  sed -e "s;--host=raspberrypi.local;--host=$(hostname -I | awk '{print $1}');" -i ${DIR_CONFIG}/supervisor/ODR-misc.conf
+
+  ## Restart supervisor
+  sudo supervisorctl reread
+  sudo supervisorctl reload
+
+  echo "Sample configuration files installed"
+}
+
+install () {
+  # Clone the sources, build and install programs, clean-up
+  install_base ${1}
+  install_fdkaac ${1}
+  install_audioenc ${1}
+  install_padenc ${1}
+  install_dabmux ${1}
+  install_dabmod ${1}
+  install_srccmp ${1}
+  install_encmgr ${1}
+  install_config
+  sudo ldconfig
+
+  sudo apt-get purge -y
+  sudo rm -rf /var/lib/apt/lists/*
+  
+  echo "ODR-mmbTools suite and configuration files installed"
+}
+
+remove () {
+  # Uninstall programs
+  for makefile in $(ls ${DIR_MMB}/**/Makefile); do
+    pushd $(dirname ${makefile})
+    sudo make uninstall
+    popd
+  done
+
+  # Delete sources
+  rm -rf ${DIR_MMB}
+
+  # Delete configuration files
+  rm -rf ${DIR_CONFIG}
+
+  # Update supervisor
+  sudo rm /etc/supervisor/conf.d/ODR-*
+  sudo supervisorctl reread
+  sudo supervisorctl reload
+
+  echo "ODR-mmbTools suite and configuration files removed"
+}
+
+# MAIN PROGRAM
+branch="master"
+action=""
+
+while [ "$#" -gt 0 ] ; do
+  case "${1}" in
+    (-h|--help) print_usage; exit 0 ;;
+    (-b|--branch) branch="${2}" ; shift ;;
+    install) action="install" ;;
+    remove) action="remove" ;;
+    *) print_usage; exit 1 ;;
+  esac
+  shift
+done
+
+if [ "${action}" == "install" ]; then
+  install ${branch}
+else 
+  remove
+fi

@@ -1,72 +1,105 @@
-ODR-mmbTools scripts for 24/7 operation
-=======================================
-version : 2016-10-07
+# Table of contents
+- [Introduction](#introduction)
+- [ODR-mmbTools components](#odr-mmbtools-components)
+- [Repository structure](#repository-structure)
+- [Operations](#operations)
+- [Configuration](#configuration)
 
-Prerequisites
--------------
-You need to have a working ODR-DabMux, ODR-DabMod, ODR-AudioEnc, ODR-PadEnc
-and/or Toolame-DAB configuration to use these scripts. Also
-[supervisor](http://supervisord.org/) is needed. (apt-get install supervisor)
+# Introduction
+The goal of this repository is to provide a:
+- Debian shell script that installs or removes the:
+    - Main components of the odr-mmbTools suite used in a transmission chain
+    - [Supervisor](http://supervisord.org/) package
+- Simple yet functional dab configuration sample that you can adapt to your needs
+- Vagrantfile that allows you to quickly setup a lite debian bullseye virtual environment over which to test ODR-mmbTools
 
-The tools are expected to be installed in their usual place in /usr/local.
+# ODR-mmbTools components
+- Encoder-manager: provides a web interface to manage audio streams and their related PAD data
+- PAD encoder: one per radio station being broadcasted. Gathers radio-related data (ex: artist, song, slogan, logo) and shares it with the related audio encoder
+- Audio encoder: one per radio station being broadcasted. Receives the radio web stream, combines it with the data from the PAD encoder and shares it with the multiplexer
+- Multiplexer: packs the data from audio encoders into a DAB/DAB+ ensemble and shares it with a modulator
+- Multiplex-manager: provides a web interface to view and modify some multiplex parameters
+- Modulator: creates a modulation with the multiplexer data and sends it to a transmitter
 
-Folder Structure
-----------------
+# Repository structure
+## config
+This folder contains the sample configuration files. If you use the provided installation script, it will be copied on your system:
+- config/odr-dabmod.ini: ODR-DabMod configuration
+- config/odr-dabmux.info: ODR-DabMux configuration
+- config/supervisor/ODR-encoders.conf: supervisor configuration file for all encoders (audio + PAD)
+- config/supervisor/ODR-encoders.conf: supervisor configuration file for all other odr-mmbTools excluding the encoders
+- config/mot/: folder with the dls and slide files
+## install
+This folder contains the installation/removal shell script. Please check the **README.md** file inside this directory to run the installation shell script
+## vagrant
+This folder contains Vagrant-related files. Please check the **README.md** file inside this directory to setup and run a Vagrant box.
 
-The 'config' folder contains all needed configuration file and needed to be
-moved into /home/odr/ folder.
+# Operations
+In this section:
+- **server** relates to the host where you installed the odr-mmbTools and the configuration files
+- **client** relates to any computer (including the server)
 
-  * config/mod.conf : contains ODR-DabMod configuration
-  * config/mux.conf : contains ODR-DabMux configuration
-  * config/supervisor/ : contains all supervisor configuration files
-  * config/mot/ : contains all dls and slide files. You need to create fifo
-    with mkfifo for each radio (e.g. mkfifo /home/odr/config/mot/f3.pad)
+After you ran the installation script on the server, point the web browser on the client to the **Supervisor web interface** on the host (http://server_address:8001). The default user name is **odr** and the default password is **odr**. Please note that this user name is not a system user profile. 
 
+The supervisor web interface provides a graphical interface to start or stop each components of the DAB/DAB+ transmission chain: modulator, multiplexer, encoders (audio & data), encoder-manager and multiplex-manager.
 
-About Audio and PAD Encoders
-----------------------------
+# Configuration
+## User access
+### Supervisor web interface
+If you want to change the default user name and/or user password authorized to access the Supervisor web interface, then apply the following commands:
+```
+# Change the user name
+sudo sed -e 's/^username = odr/^username = whatever_user/' -i /etc/supervisor/supervisord.conf
 
-The encoder (ODR-AudioEnc or toolame-dab) writes ICY-Text into a text file. You
-need to create this file at first for each radio :
-  * touch /home/odr/config/mot/f3.txt
+# Change the user password
+sudo sed -e 's/^password = odr/^password = whatever_password/' -i /etc/supervisor/supervisord.conf
+```
+Please note that *whatever_user* is not related to any linux profiles
 
-ODR-PadEnc reads ICY-Text information from previous text file and writes into
-the pad file. This pad file need to be a FIFO and you need to create it for
-each radio :
-  * mkfifo /home/odr/config/mot/f3.pad
+### Encoder-manager web interface
+If you want to change the default user profile and/or user password authorized to access the Encoder-manager web interface, then apply the following commands:
+```
+# Change the user name
+sed -e 's/"username": "odr"/"username": "whatever_user"/' -i $HOME/config/encodermanager.json
 
-If you use Slide Show, you can put your images into the directory under mot
-folder corresponding to the radio (example: /home/odr/config/mot/f3/)
+# Change the user password
+sed -e 's/"password": "odr"/"password": "whatever_password"/' -i $HOME/config/encodermanager.json
+```
+Please note that *whatever_user* is not related to any linux profiles
 
+## RF Transmission
+### Improve the transmitted RF spectrum
+If your hardware/virtual host is not powerful enough, then you should set the following 2 parameters in the $HOME/config/odr-dabmod.ini file to less stringent value:
+- modulator rate=2048000
+- firfilter enabled=0
 
-About Supervisor
-----------------
+### Change the transmission channel
+If channel 5A is being used in your area, you can easily switch to a [new transmission channel](http://www.wohnort.org/config/freqs.html) by applying the following command: 
+```
+sed -e 's/^channel=5A/^channel=a_free_channel_in_your_area/' -i $HOME/config/odr-dabmod.ini
+```
 
-You need to create sym link into /etc/supervisor/conf.d/ for each radio
-configuration file and call supervisorctl to reread and update configuration.
-Please refer to the official [supervisor](http://supervisord.org/)
-documentation for details.
+### Change the SOAPYSDR-compatible device
+The modulator sample configuration file is setup for a [HackRF One](https://greatscottgadgets.com/hackrf/one/) using the [SoapySDR](https://github.com/pothosware/SoapySDR/wiki) interface.
 
-Example :
-  * sudo ln -s /home/odr/config/supervisor/f3.conf /etc/supervisor/conf.d/f3.conf
-  * sudo supervisorctl reread
-  * sudo supervisorctl update
+If you need to transmit with another SoapySDR-compatible transceiver card, then apply one of the following commands:
+```
+# LimeSDR
+sed -e 's/^device=driver=hackrf/^device=driver=lime/' -i $HOME/config/odr-dabmod.ini
 
-All services are launched from supervisor.
+# PlutoSDR
+sed -e 's/^device=driver=hackrf/^device=driver=plutosdr/' -i $HOME/config/odr-dabmod.ini
+```
 
-To show status of all services :
-  * sudo supervisorctl status
+### Change the transmission power setting
+We recommend that you check the documentation of the SoapySDR module for your device for the field **txgain** in file $HOME/config/odr-dabmod.ini
 
-To [stop|start|restart] a service :
-  * sudo supervisorctl [stop|start|restart] service-name
+## Broadcast programs
+### Change the name of the multiplex
+If you want to change the name of the multiplex, then change the label and shortlabel values within the **ensemble** block in file $HOME/config/odr-dabmux.info
 
-To apply change after change anything in /home/odr/config/supervisor/ file you
-need to call supervisor to reread and update configuration.
-  * sudo supervisorctl reread
-  * sudo supervisorctl update
-
-Supervisor redirects all logs from the tools to files in /var/log/supervisor/
-You may need to ensure yourself that this directory exists. The logs will get
-rotated according to the policy defined by your distribution. More details in
-the [child logging](http://supervisord.org/logging.html#child-process-logs)
-section of the documentation.
+### Change and/or add new programs
+If your server is powerful enough, then you can add more services/sub-channels/components
+1. Start job **10-EncoderManager** from the Supervisor web access
+1. Point the web browser of the client to the **Encoder Manager web interface** on the host (http://server_address:8003). You can use the excellent [radio browser directory](https://www.radio-browser.info) to identify the url of the radio audio stream
+1. Modify file $HOME/config/odr-dabmux.info and adapt the services, subchannels and components in relation with the changes you made with the Encoder-Manager. You should use the values mentionned in the [official ETSI TS 101 756 document](https://www.etsi.org/deliver/etsi_ts/101700_101799/101756/02.02.01_60/ts_101756v020201p.pdf). 
