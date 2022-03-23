@@ -58,7 +58,13 @@ EOF
 
 install_audioenc () {
   # Install mmb-tools: audio encoder
-  sudo apt-get install -y libzmq3-dev libzmq5 libvlc-dev vlc-data vlc-plugin-base libcurl4-openssl-dev pkg-config
+  sudo apt-get install -y \
+    libzmq3-dev libzmq5 libjack-jackd2-dev jackd2 \ 
+    libvlc-dev vlc-data vlc-plugin-base \
+    gstreamer1.0-plugins-bad gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly \
+    libgstreamer-plugins-bad1.0-dev libgstreamer-plugins-base1.0-dev \
+    libgstreamer1.0-dev libcurl4-openssl-dev pkg-config
   if [ ! -d ${DIR_AUDIO} ]; then
     pushd ${DIR_MMB}
     git clone https://github.com/Opendigitalradio/ODR-AudioEnc.git --branch ${1}
@@ -66,7 +72,7 @@ install_audioenc () {
   fi
   pushd ${DIR_AUDIO}
   ./bootstrap
-  ./configure --enable-vlc
+  ./configure --enable-alsa --enable-jack --enable-vlc --enable-gst
   make
   sudo make install
   make clean
