@@ -39,7 +39,7 @@ EOF
 install_base () {
   # Install the essential tools and create the tools root directory
   sudo apt-get update
-  sudo apt-get install -y build-essential automake libtool supervisor
+  sudo apt-get install --yes build-essential automake libtool pkg-config supervisor
 
   if [ ! -d ${DIR_MMB} ]; then
     mkdir ${DIR_MMB}
@@ -58,13 +58,10 @@ EOF
 
 install_audioenc () {
   # Install mmb-tools: audio encoder
-  sudo apt-get install -y \
-    libzmq3-dev libzmq5 libjack-jackd2-dev jackd2 \ 
-    libvlc-dev vlc-data vlc-plugin-base \
-    gstreamer1.0-plugins-bad gstreamer1.0-plugins-base \
-    gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly \
-    libgstreamer-plugins-bad1.0-dev libgstreamer-plugins-base1.0-dev \
-    libgstreamer1.0-dev libcurl4-openssl-dev pkg-config
+  sudo apt-get install --yes \
+    libzmq3-dev libasound2-dev libjack-jackd2-dev libvlc-dev \
+    libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
+    libcurl4-openssl-dev 
   if [ ! -d ${DIR_AUDIO} ]; then
     pushd ${DIR_MMB}
     git clone https://github.com/Opendigitalradio/ODR-AudioEnc.git --branch ${1}
@@ -76,6 +73,16 @@ install_audioenc () {
   make
   sudo make install
   make clean
+  sudo apt-get purge --yes \
+    libzmq3-dev libasound2-dev libjack-jackd2-dev libvlc-dev \
+    libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
+    libcurl4-openssl-dev 
+  sudo apt-get autoremove --yes
+  sudo apt-get install -y \
+    libzmq5 libasound2 libjack0 \
+    libvlc5 vlc-plugin-base \
+    libgstreamer1.0 libgstreamer-plugins-base1.0 gstreamer1.0-plugins-good \
+    libcurl4
   popd
 }
 
