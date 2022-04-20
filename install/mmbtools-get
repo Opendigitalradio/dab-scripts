@@ -105,12 +105,17 @@ install_padenc () {
 
 install_dabmux () {
   # Install mmb-tools: dab multiplexer
-  sudo apt-get install -y libboost-system-dev libcurl4-openssl-dev python3-zmq
+  sudo apt-get install -y 
+    libboost-system-dev \
+    libcurl4-openssl-dev \
+    libzmq3-dev
+
   if [ ! -d ${DIR_MUX} ]; then
     pushd ${DIR_MMB}
     git clone https://github.com/Opendigitalradio/ODR-DabMux.git --branch ${1}
     popd
   fi
+
   pushd ${DIR_MUX}
   ./bootstrap.sh
   ./configure
@@ -118,6 +123,15 @@ install_dabmux () {
   sudo make install
   make clean
   popd
+
+  sudo apt-get purge -y 
+    libboost-system-dev \
+    libcurl4-openssl-dev \
+    python3-zmq
+  sudo apt-get install -y 
+    libboost-system1.74.0 \
+    libcurl4 \
+    libzmq5 
 }
 
 install_dabmod () {
