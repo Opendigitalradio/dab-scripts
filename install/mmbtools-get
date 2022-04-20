@@ -263,7 +263,7 @@ install_config () {
     rm -r "${DIR_CONFIG}"
   fi
   cp -r $(realpath $(dirname $0))/../${CONFIG_NAME} "${DIR_CONFIG}"
-  sudo ln -s "${DIR_CONFIG}/supervisor/*.conf" /etc/supervisor/conf.d/
+  sudo ln -s "${DIR_CONFIG}"/supervisor/*.conf /etc/supervisor/conf.d/
 
   ## Adapt the supervisor configuration files
   for file in "${DIR_CONFIG}"/supervisor/*.conf; do
@@ -314,6 +314,12 @@ install () {
 }
 
 remove () {
+
+  # Update supervisor
+  sudo rm /etc/supervisor/conf.d/ODR-*
+  sudo supervisorctl reread
+  sudo supervisorctl reload
+
   # Uninstall programs
   for makefile in $(ls ${DIR_MMB}/**/Makefile); do
     pushd $(dirname ${makefile}) || return
@@ -326,11 +332,6 @@ remove () {
 
   # Delete configuration files
   rm -rf "${DIR_CONFIG}"
-
-  # Update supervisor
-  sudo rm /etc/supervisor/conf.d/ODR-*
-  sudo supervisorctl reread
-  sudo supervisorctl reload
 
   echo "ODR-mmbTools suite and configuration files removed"
 }
