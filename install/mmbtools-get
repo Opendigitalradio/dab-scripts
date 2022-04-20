@@ -280,7 +280,7 @@ install () {
   install_config
   sudo ldconfig
 
-  sudo apt-get purge -y
+  sudo apt-get autoremove -y
   sudo rm -rf /var/lib/apt/lists/*
   
   echo "ODR-mmbTools suite and configuration files installed"
