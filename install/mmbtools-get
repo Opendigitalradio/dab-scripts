@@ -170,7 +170,7 @@ install_dabmod () {
   
   pushd "${DIR_MOD}" || return
   ./bootstrap.sh
-  ./configure CFLAGS="-O3 -DNDEBUG" CXXFLAGS="-O3 -DNDEBUG" --enable-fast-math --disable-zeromq --enable-limesdr --enable-bladerf
+  ./configure CFLAGS="-O3 -DNDEBUG" CXXFLAGS="-O3 -DNDEBUG" --enable-fast-math --enable-limesdr --enable-bladerf
   make
   sudo make install
   make clean
