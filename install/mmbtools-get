@@ -68,18 +68,18 @@ install_audioenc () {
     libzmq3-dev
 
   if [ ! -d "${DIR_AUDIO}" ]; then
-    pushd "${DIR_MMB}"
+    pushd "${DIR_MMB}" || return
     git clone https://github.com/Opendigitalradio/ODR-AudioEnc.git --branch "${1}"
-    popd
+    popd || return
   fi
 
-  pushd "${DIR_AUDIO}"
+  pushd "${DIR_AUDIO}" || return
   ./bootstrap
   ./configure --enable-alsa --enable-jack --enable-vlc --enable-gst
   make
   sudo make install
   make clean
-  popd
+  popd || return
 
   sudo apt-get purge --yes \
     libasound2-dev \
@@ -106,18 +106,18 @@ install_padenc () {
   sudo apt-get install -y libmagickwand-dev
 
   if [ ! -d "${DIR_PAD}" ]; then
-    pushd "${DIR_MMB}"
+    pushd "${DIR_MMB}" || return
     git clone https://github.com/Opendigitalradio/ODR-PadEnc.git --branch "${1}"
-    popd
+    popd || return
   fi
 
-  pushd "${DIR_PAD}"
+  pushd "${DIR_PAD}" || return
   ./bootstrap
   ./configure
   make
   sudo make install
   make clean
-  popd
+  popd || return
 }
 
 install_dabmux () {
@@ -128,18 +128,18 @@ install_dabmux () {
     libzmq3-dev
 
   if [ ! -d "${DIR_MUX}" ]; then
-    pushd "${DIR_MMB}"
+    pushd "${DIR_MMB}" || return
     git clone https://github.com/Opendigitalradio/ODR-DabMux.git --branch "${1}"
-    popd
+    popd || return
   fi
 
-  pushd "${DIR_MUX}"
+  pushd "${DIR_MUX}" || return
   ./bootstrap.sh
   ./configure
   make
   sudo make install
   make clean
-  popd
+  popd || return
 
   sudo apt-get purge -y 
     libboost-system-dev \
@@ -163,18 +163,18 @@ install_dabmod () {
     libzmq3-dev  
   
   if [ ! -d "${DIR_MOD}" ]; then
-    pushd "${DIR_MMB}"
+    pushd "${DIR_MMB}" || return
     git clone https://github.com/Opendigitalradio/ODR-DabMod.git --branch "${1}"
-    popd
+    popd || return
   fi
   
-  pushd "${DIR_MOD}"
+  pushd "${DIR_MOD}" || return
   ./bootstrap.sh
   ./configure CFLAGS="-O3 -DNDEBUG" CXXFLAGS="-O3 -DNDEBUG" --enable-fast-math --disable-zeromq --enable-limesdr --enable-bladerf
   make
   sudo make install
   make clean
-  popd
+  popd || return
 
   sudo apt-get purge -y 
     libbladerf-dev \
@@ -197,42 +197,44 @@ install_dabmod () {
 install_fdkaac () {
   # Install mmb-tools: fdk-aac
   if [ ! -d "${DIR_FDKAAC}" ]; then
-    pushd "${DIR_MMB}"
+    pushd "${DIR_MMB}" || return
     git clone https://github.com/Opendigitalradio/fdk-aac.git
-    popd
+    popd || return
   fi
-  pushd "${DIR_FDKAAC}"
+  
+  pushd "${DIR_FDKAAC}" || return
   ./bootstrap
   ./configure
   make
   sudo make install
   make clean
-  popd
+  popd || return
 }
 
 install_srccmp () {
   # Install mmb-tools: source companion
   if [ ! -d "${DIR_SRCCMP}" ]; then
-    pushd ${DIR_MMB}
+    pushd "${DIR_MMB}" || return
     git clone https://github.com/Opendigitalradio/ODR-SourceCompanion.git --branch "${1}"
-    popd
+    popd || return
   fi
-  pushd "${DIR_SRCCMP}"
+
+  pushd "${DIR_SRCCMP}" || return
   ./bootstrap
   ./configure
   make
   sudo make install
   make clean
-  popd
+  popd || return
 }
 
 install_encmgr () {
   # Install mmb-tools: encoder manager
   sudo apt-get install -y python3-cherrypy3 python3-jinja2 python3-serial python3-yaml supervisor python3-pysnmp4
   if [ ! -d "${DIR_ENCMGR}" ]; then
-    pushd "${DIR_MMB}"
+    pushd "${DIR_MMB}" || return
     git clone https://github.com/Opendigitalradio/ODR-EncoderManager.git --branch "${1}"
-    popd
+    popd || return
   fi
   ## Add the current user to the dialout and audio groups
   sudo usermod --append --group dialout $(id --user --name)
@@ -289,9 +291,9 @@ install () {
 remove () {
   # Uninstall programs
   for makefile in $(ls ${DIR_MMB}/**/Makefile); do
-    pushd $(dirname ${makefile})
+    pushd $(dirname ${makefile}) || return
     sudo make uninstall
-    popd
+    popd || return
   done
 
   # Delete sources
