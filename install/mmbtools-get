@@ -266,17 +266,26 @@ install_config () {
   sudo ln -s "${DIR_CONFIG}/supervisor/*.conf" /etc/supervisor/conf.d/
 
   ## Adapt the supervisor configuration files
-  sed -e "s;user=pi;user=$(id --user --name);g" -i "${DIR_CONFIG}/supervisor/*.conf"
-  sed -e "s;group=pi;group=$(id --group --name);g" -i "${DIR_CONFIG}/supervisor/*.conf"
-  sed -e "s;/home/pi;${HOME};g" -i "${HOME}/config/supervisor/*.conf"
+  for file in "${DIR_CONFIG}"/supervisor/*.conf; do
+    [[ -e ${file} ]] || break
+    sed \
+      -e "s;user=pi;user=$(id --user --name);g" \
+      -e "s;group=pi;group=$(id --group --name);g" \
+      -e "s;/home/pi;${HOME};g" \
+      -i "${file}"
+  done
 
   ## Adapt the ODR-EncoderManager configuration file
-  sed -e "s;/home/pi;${HOME};g" -i "${DIR_CONFIG}/encodermanager.json"
-  sed -e "s;\"user\": \"pi\";\"user\": \"$(id --user --name)\";g" -i "${DIR_CONFIG}/encodermanager.json"
-  sed -e "s;\"group\": \"pi\";\"group\": \"$(id --group --name)\";g" -i "${DIR_CONFIG}/encodermanager.json"
+  sed \
+    -e "s;/home/pi;${HOME};g" \
+    -e "s;\"user\": \"pi\";\"user\": \"$(id --user --name)\";g" \
+    -e "s;\"group\": \"pi\";\"group\": \"$(id --group --name)\";g" \
+    -i "${DIR_CONFIG}/encodermanager.json"
 
   ## Adapt the odr-misc.conf
-  sed -e "s;--host=raspberrypi.local;--host=$(hostname -I | awk '{print $1}');" -i "${DIR_CONFIG}/supervisor/ODR-misc.conf"
+  sed \
+    -e "s;--host=raspberrypi.local;--host=$(hostname -I | awk '{print $1}');" \
+    -i "${DIR_CONFIG}/supervisor/ODR-misc.conf"
 
   ## Restart supervisor
   sudo supervisorctl reread
