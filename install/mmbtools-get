@@ -103,7 +103,7 @@ install_audioenc () {
 
 install_padenc () {
   # Install mmb-tools: PAD encoder
-  sudo apt-get install -y libmagickwand-dev
+  sudo apt-get install --yes libmagickwand-dev
 
   if [ ! -d "${DIR_PAD}" ]; then
     pushd "${DIR_MMB}" || return
@@ -122,7 +122,7 @@ install_padenc () {
 
 install_dabmux () {
   # Install mmb-tools: dab multiplexer
-  sudo apt-get install -y 
+  sudo apt-get install --yes \
     libboost-system-dev \
     libcurl4-openssl-dev \
     libzmq3-dev
@@ -141,11 +141,11 @@ install_dabmux () {
   make clean
   popd || return
 
-  sudo apt-get purge -y 
+  sudo apt-get purge --yes \
     libboost-system-dev \
     libcurl4-openssl-dev \
     python3-zmq
-  sudo apt-get install -y 
+  sudo apt-get install --yes 
     libboost-system1.74.0 \
     libcurl4 \
     libzmq5 
@@ -153,7 +153,7 @@ install_dabmux () {
 
 install_dabmod () {
   # Install mmb-tools: modulator
-  sudo apt-get install -y 
+  sudo apt-get install --yes \
     libbladerf-dev \
     libcurl4-openssl-dev \
     libfftw3-dev \
@@ -176,7 +176,7 @@ install_dabmod () {
   make clean
   popd || return
 
-  sudo apt-get purge -y 
+  sudo apt-get purge --yes \
     libbladerf-dev \
     libcurl4-openssl-dev \
     libfftw3-dev \
@@ -184,7 +184,7 @@ install_dabmod () {
     libsoapysdr-dev \
     libuhd-dev \
     libzmq3-dev  
-  sudo apt-get install -y 
+  sudo apt-get install --yes \
     libbladerf2 \
     libcurl4 \
     libfftw3-3 \
@@ -230,7 +230,7 @@ install_srccmp () {
 
 install_encmgr () {
   # Install mmb-tools: encoder manager
-  sudo apt-get install -y python3-cherrypy3 python3-jinja2 python3-serial python3-yaml supervisor python3-pysnmp4
+  sudo apt-get install --yes python3-cherrypy3 python3-jinja2 python3-serial python3-yaml supervisor python3-pysnmp4
   if [ ! -d "${DIR_ENCMGR}" ]; then
     pushd "${DIR_MMB}" || return
     git clone https://github.com/Opendigitalradio/ODR-EncoderManager.git --branch "${1}"
@@ -282,7 +282,7 @@ install () {
   install_config
   sudo ldconfig
 
-  sudo apt-get autoremove -y
+  sudo apt-get autoremove --yes
   sudo rm -rf /var/lib/apt/lists/*
   
   echo "ODR-mmbTools suite and configuration files installed"
