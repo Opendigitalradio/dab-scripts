@@ -59,41 +59,58 @@ EOF
 install_audioenc () {
   # Install mmb-tools: audio encoder
   sudo apt-get install --yes \
-    libzmq3-dev libasound2-dev libjack-jackd2-dev libvlc-dev \
-    libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
-    libcurl4-openssl-dev 
+    libasound2-dev \
+    libcurl4-openssl-dev \
+    libjack-jackd2-dev \
+    libgstreamer1.0-dev \
+    libgstreamer-plugins-base1.0-dev \
+    libvlc-dev \
+    libzmq3-dev
+
   if [ ! -d ${DIR_AUDIO} ]; then
     pushd ${DIR_MMB}
     git clone https://github.com/Opendigitalradio/ODR-AudioEnc.git --branch ${1}
     popd
   fi
+
   pushd ${DIR_AUDIO}
   ./bootstrap
   ./configure --enable-alsa --enable-jack --enable-vlc --enable-gst
   make
   sudo make install
   make clean
-  sudo apt-get purge --yes \
-    libzmq3-dev libasound2-dev libjack-jackd2-dev libvlc-dev \
-    libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
-    libcurl4-openssl-dev 
-  sudo apt-get autoremove --yes
-  sudo apt-get install -y \
-    libzmq5 libasound2 libjack0 \
-    libvlc5 vlc-plugin-base \
-    libgstreamer1.0 libgstreamer-plugins-base1.0 gstreamer1.0-plugins-good \
-    libcurl4
   popd
+
+  sudo apt-get purge --yes \
+    libasound2-dev \
+    libcurl4-openssl-dev \
+    libjack-jackd2-dev \
+    libgstreamer1.0-dev \
+    libgstreamer-plugins-base1.0-dev \
+    libvlc-dev \
+    libzmq3-dev
+  sudo apt-get install --yes \
+    gstreamer1.0-plugins-good \
+    libasound2 \
+    libcurl4 \
+    libgstreamer1.0 \
+    libgstreamer-plugins-base1.0 \
+    libjack0 \
+    libvlc5 \
+    libzmq5 \
+    vlc-plugin-base
 }
 
 install_padenc () {
   # Install mmb-tools: PAD encoder
   sudo apt-get install -y libmagickwand-dev
+
   if [ ! -d ${DIR_PAD} ]; then
     pushd ${DIR_MMB}
     git clone https://github.com/Opendigitalradio/ODR-PadEnc.git --branch ${1}
     popd
   fi
+
   pushd ${DIR_PAD}
   ./bootstrap
   ./configure
