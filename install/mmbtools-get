@@ -136,12 +136,21 @@ install_dabmux () {
 
 install_dabmod () {
   # Install mmb-tools: modulator
-  sudo apt-get install -y libfftw3-dev libzmq3-dev libuhd-dev libsoapysdr-dev libbladerf-dev liblimesuite-dev
+  sudo apt-get install -y 
+    libbladerf-dev \
+    libcurl4-openssl-dev \
+    libfftw3-dev \
+    liblimesuite-dev \
+    libsoapysdr-dev \
+    libuhd-dev \
+    libzmq3-dev  
+  
   if [ ! -d ${DIR_MOD} ]; then
     pushd ${DIR_MMB}
     git clone https://github.com/Opendigitalradio/ODR-DabMod.git --branch ${1}
     popd
   fi
+  
   pushd ${DIR_MOD}
   ./bootstrap.sh
   ./configure CFLAGS="-O3 -DNDEBUG" CXXFLAGS="-O3 -DNDEBUG" --enable-fast-math --disable-zeromq --enable-limesdr --enable-bladerf
@@ -149,6 +158,23 @@ install_dabmod () {
   sudo make install
   make clean
   popd
+
+  sudo apt-get purge -y 
+    libbladerf-dev \
+    libcurl4-openssl-dev \
+    libfftw3-dev \
+    liblimesuite-dev \
+    libsoapysdr-dev \
+    libuhd-dev \
+    libzmq3-dev  
+  sudo apt-get install -y 
+    libbladerf2 \
+    libcurl4 \
+    libfftw3-3 \
+    liblimesuite20.10-1 \
+    libsoapysdr0.7 \
+    libuhd3.15.0 \
+    libzmq5
 }
 
 install_fdkaac () {
