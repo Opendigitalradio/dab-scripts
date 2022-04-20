@@ -113,13 +113,7 @@ install_dabmux () {
   fi
   pushd ${DIR_MUX}
   ./bootstrap.sh
-  ## Temporary, until ODR-DabMux configure is modified
-  arch=$(uname -m)
-  if [ "${arch}" = "armv7l" ]; then
-    ./configure --with-boost-libdir=/usr/lib/arm-linux-gnueabihf
-  else
-    ./configure
-  fi
+  ./configure
   make
   sudo make install
   make clean
