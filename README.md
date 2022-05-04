@@ -11,7 +11,8 @@ The goal of this repository is to provide a:
     - Main components of the odr-mmbTools suite used in a transmission chain
     - [Supervisor](http://supervisord.org/) package
 - Simple yet functional dab configuration sample that you can adapt to your needs
-- Vagrantfile that allows you to quickly setup a lite debian bullseye virtual environment over which to test ODR-mmbTools
+- Vagrantfile that allows you to quickly run a DAB/DAB+ ensemble through a lite debian bullseye virtual environment 
+- Docker files that allow you to quickly run a DAB/DAB+ ensemble through containers
 
 # ODR-mmbTools components
 - Encoder-manager: provides a web interface to manage audio streams and their related PAD data
@@ -22,6 +23,8 @@ The goal of this repository is to provide a:
 - Modulator: creates a modulation with the multiplexer data and sends it to a transmitter
 
 # Repository structure
+## install
+This folder contains the installation/removal shell script. Please check the **README.md** file inside this directory to run the installation shell script
 ## config
 This folder contains the sample configuration files. If you use the provided installation script, it will be copied on your system:
 - config/odr-dabmod.ini: ODR-DabMod configuration
@@ -29,10 +32,10 @@ This folder contains the sample configuration files. If you use the provided ins
 - config/supervisor/ODR-encoders.conf: supervisor configuration file for all encoders (audio + PAD)
 - config/supervisor/ODR-encoders.conf: supervisor configuration file for all other odr-mmbTools excluding the encoders
 - config/mot/: folder with the dls and slide files
-## install
-This folder contains the installation/removal shell script. Please check the **README.md** file inside this directory to run the installation shell script
+## docker
+This folder contains Docker-related files. Please check the **README.md** file inside this directory to setup and run a DAB/DAB+ ensemble through docker.
 ## vagrant
-This folder contains Vagrant-related files. Please check the **README.md** file inside this directory to setup and run a Vagrant box.
+This folder contains Vagrant-related files. Please check the **README.md** file inside this directory to setup and run a DAB/DAB+ ensemble though a Vagrant box.
 
 # Operations
 In this section:
