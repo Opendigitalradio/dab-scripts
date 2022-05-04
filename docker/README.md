@@ -1,7 +1,10 @@
 # Introduction
 [Docker](https://www.docker.com) packages software into standardized units for development, shipment and deployment.
 
-With Docker, you can run the ODR-mmbTools regardless of the operating system you are using, such as Windows, MacOS, *BSD or any non-Debian Linux.
+This folder brings you the files needed to run the encoders (audio and PAD), the multiplexer and the modulator through containers. 3 docker images are available from the [docker registry](https://hub.docker.com). They can be ran on amd64, arm64 and arm/v7 architectures:
+- [opendigitalradio/encoders](https://hub.docker.com/r/opendigitalradio/encoders)
+- [opendigitalradio/dabmux](https://hub.docker.com/r/opendigitalradio/dabmux)
+- [opendigitalradio/dabmod](https://hub.docker.com/r/opendigitalradio/dabmod)
 
 # One-time setup
 1. Install Docker on the host that will run the containers
