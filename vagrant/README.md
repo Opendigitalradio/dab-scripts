@@ -4,9 +4,9 @@
 With Vagrant and Virtualbox, you can run the ODR-mmbTools regardless of the operating system you are using, such as Windows, MacOS, *BSD or any non-Debian Linux.
 
 # Setup
-1. Install Virtualbox for your operating system
+1. Install Virtualbox
 1. Install the Virtualbox Extension pack
-1. Install Vagrant for your operating system
+1. Install Vagrant
 1. Clone this repository or copy the Vagrantfile on your host
 1. Create and start the virtual environment:
     ```
@@ -17,7 +17,7 @@ With Vagrant and Virtualbox, you can run the ODR-mmbTools regardless of the oper
     ```
     vagrant ssh
     ```
-1. Follow the instructions of the **README.md** in the install folder to build the ODR-mmbTools suite
+1. Install the odr-mmbTools suite by following [these instructions](../install/README.md)
 1. Exit the virtual session with the command **exit**
 1. Connect the SoapySDR transceiver device to your physical host where VirtualBox is running
 1. Open VirtualBox and add a USB filter that relates to your SoapySDR device to the **odr-mmb** session
