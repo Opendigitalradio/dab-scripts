@@ -21,19 +21,19 @@
 source $(realpath $(dirname $0))/mmbtools-get.conf
 
 print_usage () {
-  cat <<- EOF
-  Usage:
-    mmbtools-get [option] action
+	cat <<- EOF
+		Usage:
+			$(basename ${0}) [option] action
 
-  Option:
-    -h, --help           Print this help
-    -b, --branch <name>  Specify the odr-mmbTools branch to use 
+			Option:
+				-h, --help           Print this help
+				-b, --branch <name>  Specify the odr-mmbTools branch to use 
 
-  Action:
-    install              Install the programs and the configuration sample
-    remove               Remove the programs and the configuration sample
+			Action:
+				install              Install the programs and the configuration sample
+				remove               Remove the programs and the configuration sample
 
-EOF
+	EOF
 }
 
 install_base () {
