@@ -23,7 +23,7 @@ source $(realpath $(dirname $0))/mmbtools-get.conf
 print_usage () {
   cat <<- EOF
   Usage:
-    $(basename ${0}) [option] action
+    mmbtools-get [option] action
 
   Option:
     -h, --help           Print this help
@@ -33,7 +33,7 @@ print_usage () {
     install              Install the programs and the configuration sample
     remove               Remove the programs and the configuration sample
 
-  EOF
+EOF
 }
 
 install_base () {
