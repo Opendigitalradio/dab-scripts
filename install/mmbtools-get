@@ -356,8 +356,8 @@ while [ "$#" -gt 0 ] ; do
   shift
 done
 
-if [ "${action}" == "install" ]; then
-  install "${branch}"
-else 
-  remove
-fi
+case "${action}" in
+  install) install "${branch}" ;;
+  remove) remove ;;
+  *) print_usage; exit 3 ;;
+esac
