@@ -253,8 +253,8 @@ install_encmgr () {
     popd || return
   fi
   ## Add the current user to the dialout and audio groups
-  sudo usermod --append --group dialout $(id --user --name)
-  sudo usermod --append --group audio $(id --user --name)
+  sudo usermod --append --groups dialout $(id --user --name)
+  sudo usermod --append --groups audio $(id --user --name)
 }
 
 install_config () {
