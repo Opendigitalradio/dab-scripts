@@ -8,30 +8,36 @@ With Vagrant and Virtualbox, you can run the ODR-mmbTools regardless of the oper
 1. Install the Virtualbox Extension pack
 1. Install Vagrant
 1. Clone this repository or copy the Vagrantfile on your host
-1. Create and start the virtual environment:
+1. Create and start the virtual environment. This can take quite some task since it will compile most of the mmbtools:
     ```
-    # Go to the directory that contains the Vagrantfile
+    cd directory_containing_Vagrantfile
     vagrant up
     ```
-1. Access the virtual session to build the ODR-mmbTools suite:
-    ```
-    vagrant ssh
-    ```
-1. Install the odr-mmbTools suite by following [these instructions](../install/README.md)
-1. Exit the virtual session with the command **exit**
-1. Connect the SoapySDR transceiver device to your physical host where VirtualBox is running
-1. Open VirtualBox and add a USB filter that relates to your SoapySDR device to the **odr-mmb** session
-1. Restart the **odr-mmbtools** VirtualBox session with Vagrant:
+1. If you have a USB transceiver:
+    - Connect the transceiver device to the physical host that runs VirtualBox
+    - Open VirtualBox and add a USB filter on the **odr-mmbtools** virtual machine
+    - Login to the **odr-mmbtools** virtual machine:
+        ```
+        vagrant ssh
+        ```
+    - Review the sections **[output]** and **[soapyoutput]** in the file $HOME/config/odr-dabmod.ini and make the necessary changes
+    - Logout from the **odr-mmbtools** virtual machine:
+        ```
+        exit
+        ```
+
+1. Restart the **odr-mmbtools** virtual machine on the physical host:
     ```
     vagrant reload
     ```
 
 # Operations
-Once the ODR-mmbTools are installed, you no longer need to access the virtual session, unless you need to make configuration changes.
-
-Here are the url to access the following web interfaces:
+Here are the url to access the following web interfaces from the phyical host:
 - Supervisor: http://localhost:8001
 - Multiplex Manager: http://localhost:8002
 - Encoder Manager: http://localhost:8003
 
-You can monitor the output of odr-DabMux with dablin on localhost:9201
+You can monitor the output of the multiplexer with dablin on localhost:9201:
+```
+nc localhost 9201 | dablin_gtk -f edi -I -1
+```
