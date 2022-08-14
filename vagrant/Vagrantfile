@@ -14,5 +14,17 @@ Vagrant.configure("2") do |config|
     vb.name = "odr-mmbtools"
     vb.customize ['modifyvm', :id, '--usbxhci', 'on']
   end
+
+	config.vm.provision "shell", privileged: true, inline: <<-SHELL1
+		export DEBIAN_FRONTEND=noninteractive
+		apt-get update
+		apt-get install --no-install-recommends --yes git
+	SHELL1
+
+	config.vm.provision "shell", privileged: false, inline: <<-SHELL2
+		export DEBIAN_FRONTEND=noninteractive
+		git clone --branch next https://github.com/opendigitalradio/dab-scripts.git
+		bash dab-scripts/install/mmbtools-get --branch master install 
+	SHELL2
 end
   
