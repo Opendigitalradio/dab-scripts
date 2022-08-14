@@ -271,13 +271,13 @@ install_config () {
     sed \
       -e "s;user=pi;user=$(id --user --name);g" \
       -e "s;group=pi;group=$(id --group --name);g" \
-      -e "s;/home/pi;${HOME};g" \
+      -e "s;/home/pi;$(pwd);g" \
       -i "${file}"
   done
 
   ## Adapt the ODR-EncoderManager configuration file
   sed \
-    -e "s;/home/pi;${HOME};g" \
+    -e "s;/home/pi;$(pwd);g" \
     -e "s;\"user\": \"pi\";\"user\": \"$(id --user --name)\";g" \
     -e "s;\"group\": \"pi\";\"group\": \"$(id --group --name)\";g" \
     -i "${DIR_CONFIG}/encodermanager.json"
