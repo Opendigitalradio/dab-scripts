@@ -35,21 +35,19 @@ If you want to quickly setup a lite clean debian environment, we suggest you use
    ```
 1. Clone this repository:
    ```
-   cd $HOME
-
    # Clone the stable version of dab-scripts
    git clone https://github.com/opendigitalradio/dab-scripts.git
 
-   # Or clone the next version of dab-scripts
+   # Or clone the development version of dab-scripts
    git clone --branch next https://github.com/opendigitalradio/dab-scripts.git
    ```
 1. Install the ODR-mmbTools suite and the sample configuration folder
    ```
    # Install the stable version of odr-mmbTools
-   bash $HOME/dab-scripts/install/mmbtools-get --branch master install
+   bash dab-scripts/install/mmbtools-get --branch master install
 
-   # Or install the next version of odr-mmbTools
-   bash $HOME/dab-scripts/install/mmbtools-get --branch next install
+   # Or install the development version of odr-mmbTools
+   bash dab-scripts/install/mmbtools-get --branch next install
    ```
 
 # Removal
@@ -57,5 +55,5 @@ If you wish to remove the odr-mmbTools suite and the sample configuration folder
 1. Stop all odr-mmbTools related jobs in supervisor
 2. Remove the ODR-mmbTools software suite and the configuration folder
    ```
-   bash $HOME/dab-scripts/install/mmbtools-get remove
+   bash dab-scripts/install/mmbtools-get remove
    ```
