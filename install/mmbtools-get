@@ -27,7 +27,7 @@ print_usage () {
 
 			Option:
 				-h, --help           Print this help
-				-b, --branch <name>  Specify the odr-mmbTools branch to use 
+				-b, --branch <name>  Specify the odr-mmbTools branch to use
 
 			Action:
 				install              Install the programs and the configuration sample
@@ -145,10 +145,10 @@ install_dabmux () {
     libboost-system-dev \
     libcurl4-openssl-dev \
     python3-zmq
-  sudo apt-get install --yes 
+  sudo apt-get install --yes
     libboost-system1.74.0 \
     libcurl4 \
-    libzmq5 
+    libzmq5
 }
 
 install_dabmod () {
@@ -160,14 +160,14 @@ install_dabmod () {
     liblimesuite-dev \
     libsoapysdr-dev \
     libuhd-dev \
-    libzmq3-dev  
-  
+    libzmq3-dev
+
   if [ ! -d "${DIR_MOD}" ]; then
     pushd "${DIR_MMB}" || return
     git clone https://github.com/Opendigitalradio/ODR-DabMod.git --branch "${1}"
     popd || return
   fi
-  
+
   pushd "${DIR_MOD}" || return
   ./bootstrap.sh
   ./configure CFLAGS="-O3 -DNDEBUG" CXXFLAGS="-O3 -DNDEBUG" --enable-fast-math --enable-limesdr --enable-bladerf
@@ -183,7 +183,7 @@ install_dabmod () {
     liblimesuite-dev \
     libsoapysdr-dev \
     libuhd-dev \
-    libzmq3-dev  
+    libzmq3-dev
   sudo apt-get install --yes \
     libbladerf2 \
     libcurl4 \
@@ -201,7 +201,7 @@ install_fdkaac () {
     git clone https://github.com/Opendigitalradio/fdk-aac.git
     popd || return
   fi
-  
+
   pushd "${DIR_FDKAAC}" || return
   ./bootstrap
   ./configure
@@ -214,7 +214,7 @@ install_fdkaac () {
 install_srccmp () {
   # Install mmb-tools: source companion
   sudo apt-get install --yes \
-    libzmq3-dev  
+    libzmq3-dev
 
   if [ ! -d "${DIR_SRCCMP}" ]; then
     pushd "${DIR_MMB}" || return
@@ -231,7 +231,7 @@ install_srccmp () {
   popd || return
 
   sudo apt-get purge --yes \
-    libzmq3-dev  
+    libzmq3-dev
   sudo apt-get install --yes \
     libzmq5
 
@@ -309,7 +309,7 @@ install () {
 
   sudo apt-get autoremove --yes
   sudo rm -rf /var/lib/apt/lists/*
-  
+
   echo "ODR-mmbTools suite and configuration files installed"
 }
 
