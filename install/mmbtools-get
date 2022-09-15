@@ -155,12 +155,10 @@ install_dabmux () {
 
   apt-get purge --yes \
     libboost-system-dev \
-    libcurl4-openssl-dev \
-    python3-zmq
+    libcurl4-openssl-dev
   apt-get install --yes \
     libboost-system1.74.0 \
-    libcurl4 \
-    libzmq5
+    libcurl4
 }
 
 install_dabmod () {
