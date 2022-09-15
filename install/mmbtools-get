@@ -314,7 +314,7 @@ install () {
   install_config
   ldconfig
 
-  chown --recursive ${odr_user}:{odr_user} /home/${odr_user}
+  chown --recursive ${odr_user}:${odr_user} /home/${odr_user}
 
   apt-get autoremove --yes
   rm -rf /var/lib/apt/lists/*
