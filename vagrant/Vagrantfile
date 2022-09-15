@@ -12,7 +12,6 @@ $script = <<-SCRIPT
 		--branch next \
 		--odr-user vagrant \
 		install
-	chown --recursive vagrant:vagrant /home/vagrant
 	SCRIPT
 
 Vagrant.configure("2") do |config|
