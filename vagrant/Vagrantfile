@@ -10,7 +10,7 @@ $script = <<-SCRIPT
 		/home/vagrant/dab-scripts
 	bash /home/vagrant/dab-scripts/install/mmbtools-get \
 		--branch next \
-		--odr-user vagrant \
+		--odr-user odr \
 		install
 	SCRIPT
 
