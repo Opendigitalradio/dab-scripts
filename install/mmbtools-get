@@ -38,7 +38,6 @@ install_base () {
 	# Create odr-user if necessary
 	if ! test $(id --user "${odr_user}"); then
 		useradd --create-home "${odr_user}"
-		echo "${odr_user}:odr" | chpasswd
 	fi
 
   ## Add the current user to the dialout and audio groups
