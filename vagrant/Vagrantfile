@@ -16,17 +16,18 @@ $script = <<-SCRIPT
 
 Vagrant.configure("2") do |config|
 	config.vm.box = "debian/bullseye64"
+	config.vm.define "mmbtools"
 
-  config.vm.network "forwarded_port", guest: 8001, host: 8001
-  config.vm.network "forwarded_port", guest: 8002, host: 8002
-  config.vm.network "forwarded_port", guest: 8003, host: 8003
-  config.vm.network "forwarded_port", guest: 9201, host: 9201
+	config.vm.network "forwarded_port", guest: 8001, host: 8001
+	config.vm.network "forwarded_port", guest: 8002, host: 8002
+	config.vm.network "forwarded_port", guest: 8003, host: 8003
+	config.vm.network "forwarded_port", guest: 9201, host: 9201
 
-  config.vm.provider "virtualbox" do |vb|
+	config.vm.provider "virtualbox" do |vb|
 		vb.cpus = 2
 		vb.memory = 2048
-    vb.customize ['modifyvm', :id, '--usbxhci', 'on']
-  end
+		vb.customize ['modifyvm', :id, '--usbxhci', 'on']
+	end
 
 	config.vm.provider :libvirt do |libvirt|
 		libvirt.cpus = 2
@@ -36,6 +37,7 @@ Vagrant.configure("2") do |config|
 	end
 
 	config.vm.provision "shell" do |s|
+		s.privileged = true
 		s.env = {"DEBIAN_FRONTEND" => "noninteractive"}
 		s.inline = $script
 	end
