@@ -136,7 +136,8 @@ install_dabmux () {
   apt-get install --yes \
     libboost-system-dev \
     libcurl4-openssl-dev \
-    libzmq3-dev
+    libzmq3-dev \
+		python3-zmq
 
   if [ ! -d "${DIR_MUX}" ]; then
     pushd "${DIR_MMB}" || return
