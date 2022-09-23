@@ -32,10 +32,6 @@ This folder contains the sample configuration files. If you use the provided ins
 - config/supervisor/ODR-encoders.conf: supervisor configuration file for all encoders (audio + PAD)
 - config/supervisor/ODR-encoders.conf: supervisor configuration file for all other odr-mmbTools excluding the encoders
 - config/mot/: folder with the dls and slide files
-## docker
-This folder contains Docker-related files. Please check the **README.md** file inside this directory to setup and run a DAB/DAB+ ensemble through docker.
-## vagrant
-This folder contains Vagrant-related files. Please check the **README.md** file inside this directory to setup and run a DAB/DAB+ ensemble though a Vagrant box.
 
 # Operations
 In this section:
