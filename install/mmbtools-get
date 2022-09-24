@@ -17,36 +17,47 @@
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-## CONSTANTS
-source $(realpath $(dirname $0))/mmbtools-get.conf
-
 print_usage () {
-  cat <<- EOF
-  Usage:
-    mmbtools-get [option] action
+	cat <<- EOF
+		Usage:
+			$(basename ${0}) [option] action
 
-  Option:
-    -h, --help           Print this help
-    -b, --branch <name>  Specify the odr-mmbTools branch to use 
+			Option:
+				-h, --help           Print this help
+				-b, --branch <name>  Specify the odr-mmbTools branch to use
+				--odr-user           Opendigitalradio user
 
-  Action:
-    install              Install the programs and the configuration sample
-    remove               Remove the programs and the configuration sample
+			Action:
+				install              Install the programs and the configuration sample
+				remove               Remove the programs and the configuration sample
 
-EOF
+	EOF
 }
 
 install_base () {
+	# Create odr-user if necessary
+	if ! test $(id --user "${odr_user}"); then
+		useradd --create-home "${odr_user}"
+	fi
+
+  ## Add the current user to the dialout and audio groups
+  usermod --append --groups audio,dialout "${odr_user}"
+
   # Install the essential tools and create the tools root directory
-  sudo apt-get update
-  sudo apt-get install --yes build-essential automake libtool pkg-config supervisor
+  apt-get update
+  apt-get install --yes \
+		automake \
+	  build-essential \
+		libtool \
+		pkg-config \
+		supervisor
 
   if [ ! -d "${DIR_MMB}" ]; then
     mkdir "${DIR_MMB}"
   fi
 
   if [ ! $(grep inet_http_server /etc/supervisor/supervisord.conf) ]; then
-    cat << EOF | sudo tee -a /etc/supervisor/supervisord.conf > /dev/null
+    cat << EOF | tee -a /etc/supervisor/supervisord.conf > /dev/null
 
 [inet_http_server]
 port = 8001
@@ -58,7 +69,7 @@ EOF
 
 install_audioenc () {
   # Install mmb-tools: audio encoder
-  sudo apt-get install --yes \
+  apt-get install --yes \
     libasound2-dev \
     libcurl4-openssl-dev \
     libjack-jackd2-dev \
@@ -77,11 +88,11 @@ install_audioenc () {
   ./bootstrap
   ./configure --enable-alsa --enable-jack --enable-vlc --enable-gst
   make
-  sudo make install
+  make install
   make clean
   popd || return
 
-  sudo apt-get purge --yes \
+  apt-get purge --yes \
     libasound2-dev \
     libcurl4-openssl-dev \
     libjack-jackd2-dev \
@@ -89,7 +100,7 @@ install_audioenc () {
     libgstreamer-plugins-base1.0-dev \
     libvlc-dev \
     libzmq3-dev
-  sudo apt-get install --yes \
+  apt-get install --yes \
     gstreamer1.0-plugins-good \
     libasound2 \
     libcurl4 \
@@ -103,7 +114,7 @@ install_audioenc () {
 
 install_padenc () {
   # Install mmb-tools: PAD encoder
-  sudo apt-get install --yes libmagickwand-dev
+  apt-get install --yes libmagickwand-dev
 
   if [ ! -d "${DIR_PAD}" ]; then
     pushd "${DIR_MMB}" || return
@@ -115,17 +126,18 @@ install_padenc () {
   ./bootstrap
   ./configure
   make
-  sudo make install
+  make install
   make clean
   popd || return
 }
 
 install_dabmux () {
   # Install mmb-tools: dab multiplexer
-  sudo apt-get install --yes \
+  apt-get install --yes \
     libboost-system-dev \
     libcurl4-openssl-dev \
-    libzmq3-dev
+    libzmq3-dev \
+		python3-zmq
 
   if [ ! -d "${DIR_MUX}" ]; then
     pushd "${DIR_MMB}" || return
@@ -137,54 +149,52 @@ install_dabmux () {
   ./bootstrap.sh
   ./configure
   make
-  sudo make install
+  make install
   make clean
   popd || return
 
-  sudo apt-get purge --yes \
+  apt-get purge --yes \
     libboost-system-dev \
-    libcurl4-openssl-dev \
-    python3-zmq
-  sudo apt-get install --yes 
+    libcurl4-openssl-dev
+  apt-get install --yes \
     libboost-system1.74.0 \
-    libcurl4 \
-    libzmq5 
+    libcurl4
 }
 
 install_dabmod () {
   # Install mmb-tools: modulator
-  sudo apt-get install --yes \
+  apt-get install --yes \
     libbladerf-dev \
     libcurl4-openssl-dev \
     libfftw3-dev \
     liblimesuite-dev \
     libsoapysdr-dev \
     libuhd-dev \
-    libzmq3-dev  
-  
+    libzmq3-dev
+
   if [ ! -d "${DIR_MOD}" ]; then
     pushd "${DIR_MMB}" || return
     git clone https://github.com/Opendigitalradio/ODR-DabMod.git --branch "${1}"
     popd || return
   fi
-  
+
   pushd "${DIR_MOD}" || return
   ./bootstrap.sh
   ./configure CFLAGS="-O3 -DNDEBUG" CXXFLAGS="-O3 -DNDEBUG" --enable-fast-math --enable-limesdr --enable-bladerf
   make
-  sudo make install
+  make install
   make clean
   popd || return
 
-  sudo apt-get purge --yes \
+  apt-get purge --yes \
     libbladerf-dev \
     libcurl4-openssl-dev \
     libfftw3-dev \
     liblimesuite-dev \
     libsoapysdr-dev \
     libuhd-dev \
-    libzmq3-dev  
-  sudo apt-get install --yes \
+    libzmq3-dev
+  apt-get install --yes \
     libbladerf2 \
     libcurl4 \
     libfftw3-3 \
@@ -201,20 +211,20 @@ install_fdkaac () {
     git clone https://github.com/Opendigitalradio/fdk-aac.git
     popd || return
   fi
-  
+
   pushd "${DIR_FDKAAC}" || return
   ./bootstrap
   ./configure
   make
-  sudo make install
+  make install
   make clean
   popd || return
 }
 
 install_srccmp () {
   # Install mmb-tools: source companion
-  sudo apt-get install --yes \
-    libzmq3-dev  
+  apt-get install --yes \
+    libzmq3-dev
 
   if [ ! -d "${DIR_SRCCMP}" ]; then
     pushd "${DIR_MMB}" || return
@@ -226,20 +236,20 @@ install_srccmp () {
   ./bootstrap
   ./configure
   make
-  sudo make install
+  make install
   make clean
   popd || return
 
-  sudo apt-get purge --yes \
-    libzmq3-dev  
-  sudo apt-get install --yes \
+  apt-get purge --yes \
+    libzmq3-dev
+  apt-get install --yes \
     libzmq5
 
 }
 
 install_encmgr () {
   # Install mmb-tools: encoder manager
-  sudo apt-get install --yes \
+  apt-get install --yes \
     python3-cherrypy3 \
     python3-jinja2 \
     python3-pysnmp4 \
@@ -252,9 +262,6 @@ install_encmgr () {
     git clone https://github.com/Opendigitalradio/ODR-EncoderManager.git --branch "${1}"
     popd || return
   fi
-  ## Add the current user to the dialout and audio groups
-  sudo usermod --append --group dialout $(id --user --name)
-  sudo usermod --append --group audio $(id --user --name)
 }
 
 install_config () {
@@ -263,23 +270,23 @@ install_config () {
     rm -r "${DIR_CONFIG}"
   fi
   cp -r $(realpath $(dirname $0))/../${CONFIG_NAME} "${DIR_CONFIG}"
-  sudo ln -s "${DIR_CONFIG}"/supervisor/*.conf /etc/supervisor/conf.d/
+  ln -s "${DIR_CONFIG}"/supervisor/*.conf /etc/supervisor/conf.d/
 
   ## Adapt the supervisor configuration files
   for file in "${DIR_CONFIG}"/supervisor/*.conf; do
     [[ -e ${file} ]] || break
     sed \
-      -e "s;user=pi;user=$(id --user --name);g" \
-      -e "s;group=pi;group=$(id --group --name);g" \
-      -e "s;/home/pi;${HOME};g" \
+      -e "s;user=pi;user=$(id --user --name ${odr_user});g" \
+      -e "s;group=pi;group=$(id --group --name ${odr_user});g" \
+      -e "s;/home/pi;/home/${odr_user};g" \
       -i "${file}"
   done
 
   ## Adapt the ODR-EncoderManager configuration file
   sed \
-    -e "s;/home/pi;${HOME};g" \
-    -e "s;\"user\": \"pi\";\"user\": \"$(id --user --name)\";g" \
-    -e "s;\"group\": \"pi\";\"group\": \"$(id --group --name)\";g" \
+    -e "s;/home/pi;/home/${odr_user};g" \
+    -e "s;\"user\": \"pi\";\"user\": \"$(id --user --name ${odr_user})\";g" \
+    -e "s;\"group\": \"pi\";\"group\": \"$(id --group --name ${odr_user})\";g" \
     -i "${DIR_CONFIG}/encodermanager.json"
 
   ## Adapt the odr-misc.conf
@@ -288,8 +295,8 @@ install_config () {
     -i "${DIR_CONFIG}/supervisor/ODR-misc.conf"
 
   ## Restart supervisor
-  sudo supervisorctl reread
-  sudo supervisorctl reload
+  supervisorctl reread
+  supervisorctl reload
 
   echo "Sample configuration files installed"
 }
@@ -305,25 +312,27 @@ install () {
   install_srccmp "${1}"
   install_encmgr "${1}"
   install_config
-  sudo ldconfig
+  ldconfig
 
-  sudo apt-get autoremove --yes
-  sudo rm -rf /var/lib/apt/lists/*
-  
+  chown --recursive ${odr_user}:${odr_user} /home/${odr_user}
+
+  apt-get autoremove --yes
+  rm -rf /var/lib/apt/lists/*
+
   echo "ODR-mmbTools suite and configuration files installed"
 }
 
 remove () {
 
   # Update supervisor
-  sudo rm /etc/supervisor/conf.d/ODR-*
-  sudo supervisorctl reread
-  sudo supervisorctl reload
+  rm /etc/supervisor/conf.d/ODR-*
+  supervisorctl reread
+  supervisorctl reload
 
   # Uninstall programs
   for makefile in $(ls ${DIR_MMB}/**/Makefile); do
     pushd $(dirname ${makefile}) || return
-    sudo make uninstall
+    make uninstall
     popd || return
   done
 
@@ -337,13 +346,20 @@ remove () {
 }
 
 # MAIN PROGRAM
+if test "$(id --user)" != "0"; then
+	echo "You must be root to run $(basename ${0})" >&2
+	exit 2
+fi
+
 branch="master"
 action=""
+odr_user="$(logname)"
 
 while [ "$#" -gt 0 ] ; do
   case "${1}" in
     (-h|--help) print_usage; exit 0 ;;
     (-b|--branch) branch="${2}" ; shift ;;
+    (--odr-user) odr_user="${2}" ; shift ;;
     install) action="install" ;;
     remove) action="remove" ;;
     *) print_usage; exit 1 ;;
@@ -351,8 +367,15 @@ while [ "$#" -gt 0 ] ; do
   shift
 done
 
-if [ "${action}" == "install" ]; then
-  install "${branch}"
-else 
-  remove
+if test -z "${odr_user}"; then
+	echo "You must use the argument --odr-user" >&2
+	exit 3
 fi
+
+source $(realpath $(dirname $0))/mmbtools-get.conf
+
+case "${action}" in
+  install) install "${branch}" ;;
+  remove) remove ;;
+  *) print_usage; exit 3 ;;
+esac

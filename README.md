@@ -11,7 +11,7 @@ The goal of this repository is to provide a:
     - Main components of the odr-mmbTools suite used in a transmission chain
     - [Supervisor](http://supervisord.org/) package
 - Simple yet functional dab configuration sample that you can adapt to your needs
-- Vagrantfile that allows you to quickly run a DAB/DAB+ ensemble through a lite debian bullseye virtual environment 
+- Vagrantfile that allows you to quickly run a DAB/DAB+ ensemble through a lite debian bullseye virtual environment
 - Docker files that allow you to quickly run a DAB/DAB+ ensemble through containers
 
 # ODR-mmbTools components
@@ -32,17 +32,13 @@ This folder contains the sample configuration files. If you use the provided ins
 - config/supervisor/ODR-encoders.conf: supervisor configuration file for all encoders (audio + PAD)
 - config/supervisor/ODR-encoders.conf: supervisor configuration file for all other odr-mmbTools excluding the encoders
 - config/mot/: folder with the dls and slide files
-## docker
-This folder contains Docker-related files. Please check the **README.md** file inside this directory to setup and run a DAB/DAB+ ensemble through docker.
-## vagrant
-This folder contains Vagrant-related files. Please check the **README.md** file inside this directory to setup and run a DAB/DAB+ ensemble though a Vagrant box.
 
 # Operations
 In this section:
 - **server** relates to the host where you installed the odr-mmbTools and the configuration files
 - **client** relates to any computer (including the server)
 
-After you ran the installation script on the server, point the web browser on the client to the **Supervisor web interface** on the host (http://server_address:8001). The default user name is **odr** and the default password is **odr**. Please note that this user name is not a system user profile. 
+After you ran the installation script on the server, point the web browser on the client to the **Supervisor web interface** on the host (http://server_address:8001). The default user name is **odr** and the default password is **odr**. Please note that this user name is not a system user profile.
 
 The supervisor web interface provides a graphical interface to start or stop each components of the DAB/DAB+ transmission chain: modulator, multiplexer, encoders (audio & data), encoder-manager and multiplex-manager.
 
@@ -77,7 +73,7 @@ If your hardware/virtual host is not powerful enough, then you should set the fo
 - firfilter enabled=0
 
 ### Change the transmission channel
-If channel 5A is being used in your area, you can easily switch to a [new transmission channel](http://www.wohnort.org/config/freqs.html) by applying the following command: 
+If channel 5A is being used in your area, you can easily switch to a [new transmission channel](http://www.wohnort.org/config/freqs.html) by applying the following command:
 ```
 sed -e 's/^channel=5A/^channel=a_free_channel_in_your_area/' -i $HOME/config/odr-dabmod.ini
 ```
@@ -92,6 +88,9 @@ sed -e 's/^device=driver=hackrf/^device=driver=lime/' -i $HOME/config/odr-dabmod
 
 # PlutoSDR
 sed -e 's/^device=driver=hackrf/^device=driver=plutosdr/' -i $HOME/config/odr-dabmod.ini
+
+# Blade RF
+sed -e 's/^device=driver=hackrf/^device=driver=bladerf/' -i $HOME/config/odr-dabmod.ini
 ```
 
 ### Change the transmission power setting
@@ -105,4 +104,4 @@ If you want to change the name of the multiplex, then change the label and short
 If your server is powerful enough, then you can add more services/sub-channels/components
 1. Start job **10-EncoderManager** from the Supervisor web access
 1. Point the web browser of the client to the **Encoder Manager web interface** on the host (http://server_address:8003). You can use the excellent [radio browser directory](https://www.radio-browser.info) to identify the url of the radio audio stream
-1. Modify file $HOME/config/odr-dabmux.info and adapt the services, subchannels and components in relation with the changes you made with the Encoder-Manager. You should use the values mentionned in the [official ETSI TS 101 756 document](https://www.etsi.org/deliver/etsi_ts/101700_101799/101756/02.02.01_60/ts_101756v020201p.pdf). 
+1. Modify file $HOME/config/odr-dabmux.info and adapt the services, subchannels and components in relation with the changes you made with the Encoder-Manager. You should use the values mentionned in the [official ETSI TS 101 756 document](https://www.etsi.org/deliver/etsi_ts/101700_101799/101756/02.02.01_60/ts_101756v020201p.pdf).

@@ -35,27 +35,33 @@ If you want to quickly setup a lite clean debian environment, we suggest you use
    ```
 1. Clone this repository:
    ```
-   cd $HOME
-
    # Clone the stable version of dab-scripts
    git clone https://github.com/opendigitalradio/dab-scripts.git
 
-   # Or clone the next version of dab-scripts
+   # Or clone the development version of dab-scripts
    git clone --branch next https://github.com/opendigitalradio/dab-scripts.git
    ```
 1. Install the ODR-mmbTools suite and the sample configuration folder
    ```
    # Install the stable version of odr-mmbTools
-   bash $HOME/dab-scripts/install/mmbtools-get --branch master install
+   sudo bash dab-scripts/install/mmbtools-get --branch master install
 
-   # Or install the next version of odr-mmbTools
-   bash $HOME/dab-scripts/install/mmbtools-get --branch next install
+   # Or install the development version of odr-mmbTools
+   sudo bash dab-scripts/install/mmbtools-get --branch next install
    ```
+
+### Notes
+1. You must use the argument `--odr-user` with the command **mmbtools-get** in the following 2 cases:
+	- You are not running **mmbtools-get** with `sudo`: you must thus specify the odr user profile
+	- You are running **mmbtools-get** with `sudo` and you do not want your current user to be the odr user profile
+1. **mmbtools-get** will create the user specified with `odr-user` if it does not exist:
+	- password: odr
+	- additional groups: audio,dialout
 
 # Removal
 If you wish to remove the odr-mmbTools suite and the sample configuration folder, then follow these steps:
 1. Stop all odr-mmbTools related jobs in supervisor
 2. Remove the ODR-mmbTools software suite and the configuration folder
    ```
-   bash $HOME/dab-scripts/install/mmbtools-get remove
+   sudo bash dab-scripts/install/mmbtools-get remove
    ```
