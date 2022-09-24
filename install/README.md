@@ -12,7 +12,7 @@ The goal of the mmbtools-get shell script is to install:
 ## Preliminary notes
 We **highly recommend** that you install odr-mmbTools on a **new debian** environment, starting from the Bullseye release. Since some software components, like the audio encoders or the modulator, are CPU-intensive, we recommend you setup a lite debian environment (ie. without a GUI framework).
 
-If you want to quickly setup a lite clean debian environment, we suggest you use [Vagrant](https://www.vagrantup.com) associated with a virtualization hypervisor, like [Virtualbox](https://www.virtualbox.org). A sample Vagrantfile is available in the Vagrant folder of this repository.
+If you want to quickly play with the tools before installing anything on your host, we suggest you use our [docker-mmbtools](https://github.com/opendigitalradio/docker-mmbtools) repository.
 
 ## Steps
 1. Sign-in with your user profile
