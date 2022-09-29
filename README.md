@@ -11,8 +11,6 @@ The goal of this repository is to provide a:
     - Main components of the odr-mmbTools suite used in a transmission chain
     - [Supervisor](http://supervisord.org/) package
 - Simple yet functional dab configuration sample that you can adapt to your needs
-- Vagrantfile that allows you to quickly run a DAB/DAB+ ensemble through a lite debian bullseye virtual environment
-- Docker files that allow you to quickly run a DAB/DAB+ ensemble through containers
 
 # ODR-mmbTools components
 - Encoder-manager: provides a web interface to manage audio streams and their related PAD data
