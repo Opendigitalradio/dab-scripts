@@ -40,7 +40,7 @@ install_base () {
 		useradd --create-home "${odr_user}"
 	fi
 
-	## Add the current user to the dialout and audio groups
+	## Add the odr user to the dialout and audio groups
 	usermod --append --groups audio,dialout "${odr_user}"
 
 	# Install the essential tools and create the tools root directory
