@@ -43,6 +43,12 @@ install_base () {
 	## Add the odr user to the dialout and audio groups
 	usermod --append --groups audio,dialout "${odr_user}"
 
+	# Add component non-free if necessary
+	if ! grep --quiet non-free /etc/apt/sources.list; then
+		sed -e "s/main/main non-free/g" -i /etc/apt/sources.list
+		apt update
+	fi
+
 	# Install the essential tools and create the tools root directory
 	apt-get update
 	apt-get install --yes \
@@ -204,26 +210,10 @@ install_dabmod () {
 		libzmq5
 }
 
-install_fdkaac () {
-	# Install mmb-tools: fdk-aac
-	if [ ! -d "${DIR_FDKAAC}" ]; then
-		pushd "${DIR_MMB}" || return
-		git clone https://github.com/Opendigitalradio/fdk-aac.git
-		popd || return
-	fi
-
-	pushd "${DIR_FDKAAC}" || return
-	./bootstrap
-	./configure
-	make
-	make install
-	make clean
-	popd || return
-}
-
 install_srccmp () {
 	# Install mmb-tools: source companion
 	apt-get install --yes \
+		libfdk-aac-dev \
 		libzmq3-dev
 
 	if [ ! -d "${DIR_SRCCMP}" ]; then
@@ -241,8 +231,10 @@ install_srccmp () {
 	popd || return
 
 	apt-get purge --yes \
+		libfdk-aac-dev \
 		libzmq3-dev
 	apt-get install --yes \
+		libfdk-aac2 \
 		libzmq5
 
 }
