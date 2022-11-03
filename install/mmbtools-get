@@ -25,7 +25,7 @@ print_usage () {
 			Option:
 				-h, --help           Print this help
 				-b, --branch <name>  Specify the odr-mmbTools branch to use
-				--odr-user           Opendigitalradio user
+				--odr-user <user>    Opendigitalradio user
 
 			Action:
 				install              Install the programs and the configuration sample
