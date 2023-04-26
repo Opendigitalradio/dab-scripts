@@ -279,14 +279,14 @@ install_config () {
       -e "s;user=pi;user=$(id --user --name ${odr_user});g" \
       -e "s;group=pi;group=$(id --group --name ${odr_user});g" \
       -e "s;/home/pi/ODR-mmbTools;${DIR_MMB};g" \
-      -e "s;/home/pi/config/;${DIR_CONFIG};g" \
+      -e "s;/home/pi/config/;${DIR_CONFIG}/;g" \
       -i "${file}"
   done
 
   ## Adapt the ODR-EncoderManager configuration file
   sed \
     -e "s;/home/pi/ODR-mmbTools;${DIR_MMB};g" \
-    -e "s;/home/pi/config/;${DIR_CONFIG};g" \
+    -e "s;/home/pi/config/;${DIR_CONFIG}/;g" \
     -e "s;\"user\": \"pi\";\"user\": \"$(id --user --name ${odr_user})\";g" \
     -e "s;\"group\": \"pi\";\"group\": \"$(id --group --name ${odr_user})\";g" \
     -i "${DIR_CONFIG}/encodermanager.json"
