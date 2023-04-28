@@ -6,7 +6,7 @@
         "supervisor_xmlrpc": "http://odr:odr@127.0.0.1:8001/RPC2",
         "static_directory": "/home/pi/ODR-mmbTools/ODR-EncoderManager/static/",
         "host": "0.0.0.0",
-        "supervisor_file": "/home/pi/config/supervisor/ODR-encoders.conf",
+        "supervisor_file": "/home/pi/ODR-mmbTools/config/supervisor/ODR-encoders.conf",
         "port": 8003
     },
     "auth": {
@@ -71,8 +71,8 @@
             "padenc": {
                 "enable": "true",
                 "pad": "34",
-                "dls_file": "/home/pi/config/mot/P01/INFO.dls",
-                "slide_directory": "/home/pi/config/mot/P01/slide/",
+                "dls_file": "/home/pi/ODR-mmbTools/config/mot/P01/INFO.dls",
+                "slide_directory": "/home/pi/ODR-mmbTools/config/mot/P01/slide/",
                 "slide_sleeping": "0",
                 "slide_once": "false",
                 "raw_dls": "false",
@@ -144,8 +144,8 @@
             "padenc": {
                 "enable": "true",
                 "pad": "34",
-                "dls_file": "/home/pi/config/mot/P02/INFO.dls",
-                "slide_directory": "/home/pi/config/mot/P02/slide",
+                "dls_file": "/home/pi/ODR-mmbTools/config/mot/P02/INFO.dls",
+                "slide_directory": "/home/pi/ODR-mmbTools/config/mot/P02/slide",
                 "slide_sleeping": "0",
                 "slide_once": "false",
                 "raw_dls": "false",
