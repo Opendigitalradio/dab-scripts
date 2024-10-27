@@ -76,13 +76,15 @@ EOF
 install_audioenc () {
 	# Install mmb-tools: audio encoder
 	apt-get install --yes \
+		gstreamer1.0-plugins-good \
 		libasound2-dev \
 		libcurl4-openssl-dev \
 		libjack-jackd2-dev \
 		libgstreamer1.0-dev \
 		libgstreamer-plugins-base1.0-dev \
 		libvlc-dev \
-		libzmq3-dev
+		libzmq3-dev \
+		vlc-plugin-base
 
 	if [ ! -d "${DIR_AUDIO}" ]; then
 		pushd "${DIR_MMB}" || return
@@ -97,25 +99,6 @@ install_audioenc () {
 	make install
 	make clean
 	popd || return
-
-	apt-get purge --yes \
-		libasound2-dev \
-		libcurl4-openssl-dev \
-		libjack-jackd2-dev \
-		libgstreamer1.0-dev \
-		libgstreamer-plugins-base1.0-dev \
-		libvlc-dev \
-		libzmq3-dev
-	apt-get install --yes \
-		gstreamer1.0-plugins-good \
-		libasound2 \
-		libcurl4 \
-		libgstreamer1.0 \
-		libgstreamer-plugins-base1.0 \
-		libjack0 \
-		libvlc5 \
-		libzmq5 \
-		vlc-plugin-base
 }
 
 install_padenc () {
@@ -158,19 +141,13 @@ install_dabmux () {
 	make install
 	make clean
 	popd || return
-
-	apt-get purge --yes \
-		libboost-system-dev \
-		libcurl4-openssl-dev
-	apt-get install --yes \
-		libboost-system1.74.0 \
-		libcurl4
 }
 
 install_dabmod () {
 	# Install mmb-tools: modulator
 	apt-get install --yes \
 		libbladerf-dev \
+		libboost-thread-dev \
 		libcurl4-openssl-dev \
 		libfftw3-dev \
 		liblimesuite-dev \
@@ -191,23 +168,6 @@ install_dabmod () {
 	make install
 	make clean
 	popd || return
-
-	apt-get purge --yes \
-		libbladerf-dev \
-		libcurl4-openssl-dev \
-		libfftw3-dev \
-		liblimesuite-dev \
-		libsoapysdr-dev \
-		libuhd-dev \
-		libzmq3-dev
-	apt-get install --yes \
-		libbladerf2 \
-		libcurl4 \
-		libfftw3-3 \
-		liblimesuite20.10-1 \
-		libsoapysdr0.7 \
-		libuhd3.15.0 \
-		libzmq5
 }
 
 install_srccmp () {
@@ -229,14 +189,6 @@ install_srccmp () {
 	make install
 	make clean
 	popd || return
-
-	apt-get purge --yes \
-		libfdk-aac-dev \
-		libzmq3-dev
-	apt-get install --yes \
-		libfdk-aac2 \
-		libzmq5
-
 }
 
 install_encmgr () {
@@ -299,7 +251,6 @@ install_config () {
 install () {
 	# Clone the sources, build and install programs, clean-up
 	install_base "${1}"
-	install_fdkaac "${1}"
 	install_audioenc "${1}"
 	install_padenc "${1}"
 	install_dabmux "${1}"
