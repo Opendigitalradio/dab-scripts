@@ -1,6 +1,7 @@
 # Table of contents
 - [Introduction](#introduction)
 - [Installation](#installation)
+- [Test](#test)
 - [Removal](#removal)
 
 # Introduction
@@ -53,6 +54,19 @@ If you want to quickly play with the tools before installing anything on your ho
 1. **mmbtools-get** will create the user specified with `odr-user` if it does not exist:
 	- password: odr
 	- additional groups: audio,dialout
+
+# Test
+Once the installation is completed, you can test the provided encoders and multiplex configuration files by applying the following steps:
+1. Install dablin
+   ```
+   sudo apt install --yes dablin
+   ```
+1. Access the supervison web user interface `http://<YOUR_HOST>:8001`, where <YOUR_HOST> is the host where you installed the dab script. The user is `odr` and the password is `odr`
+1. Start the 4 encoders and `20-Multiplex`
+1. Monitor the multiplex stream
+   ```
+   nc <YOUR_HOST> 9201 | dablin_gtk -f edi -I -1
+   ```
 
 # Removal
 If you wish to remove the odr-mmbTools suite and the sample configuration folder, then follow these steps:
