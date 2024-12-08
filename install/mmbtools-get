@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #    mmbtools-get - Build, install, uninstall, remove the software stack
-#    Copyright (C) 20222 Robin ALEXANDER
+#    Copyright (C) 2022..2024 Robin ALEXANDER
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -42,12 +42,6 @@ install_base () {
 
 	## Add the odr user to the dialout and audio groups
 	usermod --append --groups audio,dialout "${odr_user}"
-
-	# Add component non-free if necessary
-	if ! grep --quiet non-free /etc/apt/sources.list; then
-		sed -e "s/main/main non-free/g" -i /etc/apt/sources.list
-		apt update
-	fi
 
 	# Install the essential tools and create the tools root directory
 	apt-get update
@@ -170,27 +164,6 @@ install_dabmod () {
 	popd || return
 }
 
-install_srccmp () {
-	# Install mmb-tools: source companion
-	apt-get install --yes \
-		libfdk-aac-dev \
-		libzmq3-dev
-
-	if [ ! -d "${DIR_SRCCMP}" ]; then
-		pushd "${DIR_MMB}" || return
-		git clone https://github.com/Opendigitalradio/ODR-SourceCompanion.git --branch "${1}"
-		popd || return
-	fi
-
-	pushd "${DIR_SRCCMP}" || return
-	./bootstrap
-	./configure
-	make
-	make install
-	make clean
-	popd || return
-}
-
 install_encmgr () {
 	# Install mmb-tools: encoder manager
 	apt-get install --yes \
@@ -198,8 +171,7 @@ install_encmgr () {
 		python3-jinja2 \
 		python3-pysnmp4 \
 		python3-serial \
-		python3-yaml \
-		supervisor
+		python3-yaml
 
 	if [ ! -d "${DIR_ENCMGR}" ]; then
 		pushd "${DIR_MMB}" || return
@@ -255,15 +227,11 @@ install () {
 	install_padenc "${1}"
 	install_dabmux "${1}"
 	install_dabmod "${1}"
-	install_srccmp "${1}"
 	install_encmgr "${1}"
 	install_config
 	ldconfig
 
 	chown --recursive ${odr_user}:${odr_user} ${DIR_MMB}
-
-	apt-get autoremove --yes
-	rm -rf /var/lib/apt/lists/*
 
 	echo "ODR-mmbTools suite and configuration files installed"
 }
