@@ -59,7 +59,7 @@ If you want to quickly play with the tools before installing anything on your ho
 Once the installation is completed, you can test the provided encoders and multiplex configuration files by applying the following steps:
 1. Install dablin
    ```
-   sudo apt install --yes dablin
+   sudo apt-get install -y dablin
    ```
 1. Access the supervison web user interface `http://<YOUR_HOST>:8001`, where <YOUR_HOST> is the host where you installed the dab script. The user is `odr` and the password is `odr`
 1. Start the 4 encoders and `20-Multiplex`
